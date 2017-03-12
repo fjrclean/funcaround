@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/cl_cppgame.dir/client.cpp.o  -o cl_cppgame -rdynamic -ljsoncpp 

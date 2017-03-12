@@ -1,0 +1,4 @@
+/home/finn/qtcreator/cppgame/CMakeFiles/edit_cache.dir
+/home/finn/qtcreator/cppgame/CMakeFiles/rebuild_cache.dir
+/home/finn/qtcreator/cppgame/CMakeFiles/cl_cppgame.dir
+/home/finn/qtcreator/cppgame/CMakeFiles/sv_cppgame.dir

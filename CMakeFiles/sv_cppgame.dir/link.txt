@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/sv_cppgame.dir/WorldObject.cpp.o CMakeFiles/sv_cppgame.dir/Actor.cpp.o CMakeFiles/sv_cppgame.dir/server.cpp.o  -o sv_cppgame -rdynamic -ljsoncpp 
