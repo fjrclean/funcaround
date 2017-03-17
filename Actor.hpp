@@ -1,23 +1,40 @@
 #include <vector>
+#include <string>
+#include <cmath>
+
+enum attributes_t {
+    IS_ALIEN=1,
+    IS_HUMAN=2
+};
+
+struct action_t {
+    unsigned int actorId;
+    uint64_t action;
+};
 
 class Actor {
 
-    // This is where we would lua connection to specialize actors
+    public:
+    uint64_t attributes;
+    uint64_t actions; // actions this actor does
+    uint64_t actionsDo; //actions done this run.
+    uint64_t actionsPass; //actions to be passed this run.
+    Actor* passActionsTo[64]; // elements 0-63 correspond to actions in actions_t enum.
+    // should only be checked if action is in actionsPass
+
 
     private:
-    float m_speed;
-    // an actor can have control over other actors
-    // this number references an actor id in the global actors list
-    // some filter to allow partial control, eg only has control over certain actions for certain time/distance, etc
-    std::vector<int> m_actors;
-    int m_worldObject; // WorldObject which belongs to this actor, int referencing global list of WorldActors
 
     public:
-    Actor(float speed);
 
-    float getSpeed();
+    virtual void run() =0;
 
-    void setSpeed(float speed);
+    Actor() {
 
-    int getWorldObject();
+    }
+    Actor(uint64_t acts, uint64_t attrs) {
+        m_attributes = attrs;
+        m_actions = acts;
+    }
+
 };

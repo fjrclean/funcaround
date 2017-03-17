@@ -4,14 +4,19 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/finn/qtcreator/cppgame/Actor.cpp" "/home/finn/qtcreator/cppgame/CMakeFiles/sv_cppgame.dir/Actor.cpp.o"
-  "/home/finn/qtcreator/cppgame/WorldObject.cpp" "/home/finn/qtcreator/cppgame/CMakeFiles/sv_cppgame.dir/WorldObject.cpp.o"
-  "/home/finn/qtcreator/cppgame/server.cpp" "/home/finn/qtcreator/cppgame/CMakeFiles/sv_cppgame.dir/server.cpp.o"
+  "/home/finn/funcaround/Actor.cpp" "/home/finn/funcaround/CMakeFiles/sv_cppgame.dir/Actor.cpp.o"
+  "/home/finn/funcaround/Alien.cpp" "/home/finn/funcaround/CMakeFiles/sv_cppgame.dir/Alien.cpp.o"
+  "/home/finn/funcaround/Human.cpp" "/home/finn/funcaround/CMakeFiles/sv_cppgame.dir/Human.cpp.o"
+  "/home/finn/funcaround/Weapon.cpp" "/home/finn/funcaround/CMakeFiles/sv_cppgame.dir/Weapon.cpp.o"
+  "/home/finn/funcaround/WorldObject.cpp" "/home/finn/funcaround/CMakeFiles/sv_cppgame.dir/WorldObject.cpp.o"
+  "/home/finn/funcaround/network.cpp" "/home/finn/funcaround/CMakeFiles/sv_cppgame.dir/network.cpp.o"
+  "/home/finn/funcaround/server.cpp" "/home/finn/funcaround/CMakeFiles/sv_cppgame.dir/server.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  "."
   )
 
 # Targets to which this target links.

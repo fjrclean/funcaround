@@ -1,6 +1,10 @@
 file(REMOVE_RECURSE
   "CMakeFiles/sv_cppgame.dir/WorldObject.cpp.o"
   "CMakeFiles/sv_cppgame.dir/Actor.cpp.o"
+  "CMakeFiles/sv_cppgame.dir/network.cpp.o"
+  "CMakeFiles/sv_cppgame.dir/Weapon.cpp.o"
+  "CMakeFiles/sv_cppgame.dir/Human.cpp.o"
+  "CMakeFiles/sv_cppgame.dir/Alien.cpp.o"
   "CMakeFiles/sv_cppgame.dir/server.cpp.o"
   "sv_cppgame.pdb"
   "sv_cppgame"

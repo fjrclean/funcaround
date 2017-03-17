@@ -4,12 +4,23 @@
 CMakeFiles/sv_cppgame.dir/Actor.cpp.o: Actor.cpp
 CMakeFiles/sv_cppgame.dir/Actor.cpp.o: Actor.hpp
 
+CMakeFiles/sv_cppgame.dir/Player.cpp.o: Actor.hpp
+CMakeFiles/sv_cppgame.dir/Player.cpp.o: Player.cpp
+CMakeFiles/sv_cppgame.dir/Player.cpp.o: Player.hpp
+CMakeFiles/sv_cppgame.dir/Player.cpp.o: types.hpp
+
+CMakeFiles/sv_cppgame.dir/Weapon.cpp.o: Weapon.cpp
+
 CMakeFiles/sv_cppgame.dir/WorldObject.cpp.o: WorldObject.cpp
 CMakeFiles/sv_cppgame.dir/WorldObject.cpp.o: WorldObject.hpp
 CMakeFiles/sv_cppgame.dir/WorldObject.cpp.o: types.hpp
 
+CMakeFiles/sv_cppgame.dir/network.cpp.o: network.cpp
+CMakeFiles/sv_cppgame.dir/network.cpp.o: network.hpp
+
 CMakeFiles/sv_cppgame.dir/server.cpp.o: Actor.hpp
 CMakeFiles/sv_cppgame.dir/server.cpp.o: WorldObject.hpp
+CMakeFiles/sv_cppgame.dir/server.cpp.o: network.hpp
 CMakeFiles/sv_cppgame.dir/server.cpp.o: server.cpp
 CMakeFiles/sv_cppgame.dir/server.cpp.o: types.hpp
 

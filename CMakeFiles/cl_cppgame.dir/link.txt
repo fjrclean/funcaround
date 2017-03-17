@@ -1,1 +1,1 @@
-/usr/bin/c++      CMakeFiles/cl_cppgame.dir/client.cpp.o  -o cl_cppgame -rdynamic -ljsoncpp 
+/usr/bin/c++      CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o CMakeFiles/cl_cppgame.dir/Actor.cpp.o CMakeFiles/cl_cppgame.dir/network.cpp.o CMakeFiles/cl_cppgame.dir/Weapon.cpp.o CMakeFiles/cl_cppgame.dir/Human.cpp.o CMakeFiles/cl_cppgame.dir/Alien.cpp.o CMakeFiles/cl_cppgame.dir/client.cpp.o  -o cl_cppgame -rdynamic -ljsoncpp -lglfw -lrt -lm -ldl -lXrandr -lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes -lX11 -lpthread -lxcb -lXau -lXdmcp -lGLEW -lGLU 

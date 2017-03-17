@@ -6,23 +6,55 @@
 
 #IncludeRegexTransform: 
 
-/home/finn/qtcreator/cppgame/Actor.cpp
+/home/finn/funcaround/Actor.cpp
 Actor.hpp
-/home/finn/qtcreator/cppgame/Actor.hpp
+/home/finn/funcaround/Actor.hpp
 
-/home/finn/qtcreator/cppgame/Actor.hpp
+/home/finn/funcaround/Actor.hpp
 vector
 -
+string
+-
 
-/home/finn/qtcreator/cppgame/WorldObject.cpp
-WorldObject.hpp
-/home/finn/qtcreator/cppgame/WorldObject.hpp
+/home/finn/funcaround/Player.cpp
+Player.hpp
+/home/finn/funcaround/Player.hpp
 
-/home/finn/qtcreator/cppgame/WorldObject.hpp
+/home/finn/funcaround/Player.hpp
+Actor.hpp
+/home/finn/funcaround/Actor.hpp
 types.hpp
-/home/finn/qtcreator/cppgame/types.hpp
+/home/finn/funcaround/types.hpp
 
-/home/finn/qtcreator/cppgame/server.cpp
+/home/finn/funcaround/Weapon.cpp
+
+/home/finn/funcaround/WorldObject.cpp
+WorldObject.hpp
+/home/finn/funcaround/WorldObject.hpp
+
+/home/finn/funcaround/WorldObject.hpp
+types.hpp
+/home/finn/funcaround/types.hpp
+
+/home/finn/funcaround/network.cpp
+network.hpp
+/home/finn/funcaround/network.hpp
+
+/home/finn/funcaround/network.hpp
+sys/types.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+netinet/udp.h
+-
+arpa/inet.h
+-
+iostream
+-
+
+/home/finn/funcaround/server.cpp
 json/json.h
 -
 json/reader.h
@@ -43,24 +75,16 @@ sstream
 -
 cerrno
 -
-sys/types.h
--
-sys/socket.h
--
-netinet/in.h
--
-netinet/udp.h
--
-arpa/inet.h
--
 sys/time.h
 -
 Actor.hpp
-/home/finn/qtcreator/cppgame/Actor.hpp
+/home/finn/funcaround/Actor.hpp
 WorldObject.hpp
-/home/finn/qtcreator/cppgame/WorldObject.hpp
+/home/finn/funcaround/WorldObject.hpp
 types.hpp
-/home/finn/qtcreator/cppgame/types.hpp
+/home/finn/funcaround/types.hpp
+network.hpp
+/home/finn/funcaround/network.hpp
 
-/home/finn/qtcreator/cppgame/types.hpp
+/home/finn/funcaround/types.hpp
 

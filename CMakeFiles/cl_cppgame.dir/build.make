@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/finn/qtcreator/cppgame
+CMAKE_SOURCE_DIR = /home/finn/funcaround
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/finn/qtcreator/cppgame
+CMAKE_BINARY_DIR = /home/finn/funcaround
 
 # Include any dependencies generated for this target.
 include CMakeFiles/cl_cppgame.dir/depend.make
@@ -57,18 +57,162 @@ include CMakeFiles/cl_cppgame.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/cl_cppgame.dir/flags.make
 
+CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o: CMakeFiles/cl_cppgame.dir/flags.make
+CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o: WorldObject.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/finn/funcaround/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o -c /home/finn/funcaround/WorldObject.cpp
+
+CMakeFiles/cl_cppgame.dir/WorldObject.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cl_cppgame.dir/WorldObject.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/finn/funcaround/WorldObject.cpp > CMakeFiles/cl_cppgame.dir/WorldObject.cpp.i
+
+CMakeFiles/cl_cppgame.dir/WorldObject.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cl_cppgame.dir/WorldObject.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/finn/funcaround/WorldObject.cpp -o CMakeFiles/cl_cppgame.dir/WorldObject.cpp.s
+
+CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o.requires:
+
+.PHONY : CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o.requires
+
+CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o.provides: CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o.requires
+	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o.provides.build
+.PHONY : CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o.provides
+
+CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o.provides.build: CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o
+
+
+CMakeFiles/cl_cppgame.dir/Actor.cpp.o: CMakeFiles/cl_cppgame.dir/flags.make
+CMakeFiles/cl_cppgame.dir/Actor.cpp.o: Actor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/finn/funcaround/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/cl_cppgame.dir/Actor.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cl_cppgame.dir/Actor.cpp.o -c /home/finn/funcaround/Actor.cpp
+
+CMakeFiles/cl_cppgame.dir/Actor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cl_cppgame.dir/Actor.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/finn/funcaround/Actor.cpp > CMakeFiles/cl_cppgame.dir/Actor.cpp.i
+
+CMakeFiles/cl_cppgame.dir/Actor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cl_cppgame.dir/Actor.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/finn/funcaround/Actor.cpp -o CMakeFiles/cl_cppgame.dir/Actor.cpp.s
+
+CMakeFiles/cl_cppgame.dir/Actor.cpp.o.requires:
+
+.PHONY : CMakeFiles/cl_cppgame.dir/Actor.cpp.o.requires
+
+CMakeFiles/cl_cppgame.dir/Actor.cpp.o.provides: CMakeFiles/cl_cppgame.dir/Actor.cpp.o.requires
+	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Actor.cpp.o.provides.build
+.PHONY : CMakeFiles/cl_cppgame.dir/Actor.cpp.o.provides
+
+CMakeFiles/cl_cppgame.dir/Actor.cpp.o.provides.build: CMakeFiles/cl_cppgame.dir/Actor.cpp.o
+
+
+CMakeFiles/cl_cppgame.dir/network.cpp.o: CMakeFiles/cl_cppgame.dir/flags.make
+CMakeFiles/cl_cppgame.dir/network.cpp.o: network.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/finn/funcaround/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/cl_cppgame.dir/network.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cl_cppgame.dir/network.cpp.o -c /home/finn/funcaround/network.cpp
+
+CMakeFiles/cl_cppgame.dir/network.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cl_cppgame.dir/network.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/finn/funcaround/network.cpp > CMakeFiles/cl_cppgame.dir/network.cpp.i
+
+CMakeFiles/cl_cppgame.dir/network.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cl_cppgame.dir/network.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/finn/funcaround/network.cpp -o CMakeFiles/cl_cppgame.dir/network.cpp.s
+
+CMakeFiles/cl_cppgame.dir/network.cpp.o.requires:
+
+.PHONY : CMakeFiles/cl_cppgame.dir/network.cpp.o.requires
+
+CMakeFiles/cl_cppgame.dir/network.cpp.o.provides: CMakeFiles/cl_cppgame.dir/network.cpp.o.requires
+	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/network.cpp.o.provides.build
+.PHONY : CMakeFiles/cl_cppgame.dir/network.cpp.o.provides
+
+CMakeFiles/cl_cppgame.dir/network.cpp.o.provides.build: CMakeFiles/cl_cppgame.dir/network.cpp.o
+
+
+CMakeFiles/cl_cppgame.dir/Weapon.cpp.o: CMakeFiles/cl_cppgame.dir/flags.make
+CMakeFiles/cl_cppgame.dir/Weapon.cpp.o: Weapon.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/finn/funcaround/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/cl_cppgame.dir/Weapon.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cl_cppgame.dir/Weapon.cpp.o -c /home/finn/funcaround/Weapon.cpp
+
+CMakeFiles/cl_cppgame.dir/Weapon.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cl_cppgame.dir/Weapon.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/finn/funcaround/Weapon.cpp > CMakeFiles/cl_cppgame.dir/Weapon.cpp.i
+
+CMakeFiles/cl_cppgame.dir/Weapon.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cl_cppgame.dir/Weapon.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/finn/funcaround/Weapon.cpp -o CMakeFiles/cl_cppgame.dir/Weapon.cpp.s
+
+CMakeFiles/cl_cppgame.dir/Weapon.cpp.o.requires:
+
+.PHONY : CMakeFiles/cl_cppgame.dir/Weapon.cpp.o.requires
+
+CMakeFiles/cl_cppgame.dir/Weapon.cpp.o.provides: CMakeFiles/cl_cppgame.dir/Weapon.cpp.o.requires
+	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Weapon.cpp.o.provides.build
+.PHONY : CMakeFiles/cl_cppgame.dir/Weapon.cpp.o.provides
+
+CMakeFiles/cl_cppgame.dir/Weapon.cpp.o.provides.build: CMakeFiles/cl_cppgame.dir/Weapon.cpp.o
+
+
+CMakeFiles/cl_cppgame.dir/Human.cpp.o: CMakeFiles/cl_cppgame.dir/flags.make
+CMakeFiles/cl_cppgame.dir/Human.cpp.o: Human.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/finn/funcaround/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/cl_cppgame.dir/Human.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cl_cppgame.dir/Human.cpp.o -c /home/finn/funcaround/Human.cpp
+
+CMakeFiles/cl_cppgame.dir/Human.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cl_cppgame.dir/Human.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/finn/funcaround/Human.cpp > CMakeFiles/cl_cppgame.dir/Human.cpp.i
+
+CMakeFiles/cl_cppgame.dir/Human.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cl_cppgame.dir/Human.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/finn/funcaround/Human.cpp -o CMakeFiles/cl_cppgame.dir/Human.cpp.s
+
+CMakeFiles/cl_cppgame.dir/Human.cpp.o.requires:
+
+.PHONY : CMakeFiles/cl_cppgame.dir/Human.cpp.o.requires
+
+CMakeFiles/cl_cppgame.dir/Human.cpp.o.provides: CMakeFiles/cl_cppgame.dir/Human.cpp.o.requires
+	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Human.cpp.o.provides.build
+.PHONY : CMakeFiles/cl_cppgame.dir/Human.cpp.o.provides
+
+CMakeFiles/cl_cppgame.dir/Human.cpp.o.provides.build: CMakeFiles/cl_cppgame.dir/Human.cpp.o
+
+
+CMakeFiles/cl_cppgame.dir/Alien.cpp.o: CMakeFiles/cl_cppgame.dir/flags.make
+CMakeFiles/cl_cppgame.dir/Alien.cpp.o: Alien.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/finn/funcaround/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/cl_cppgame.dir/Alien.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cl_cppgame.dir/Alien.cpp.o -c /home/finn/funcaround/Alien.cpp
+
+CMakeFiles/cl_cppgame.dir/Alien.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cl_cppgame.dir/Alien.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/finn/funcaround/Alien.cpp > CMakeFiles/cl_cppgame.dir/Alien.cpp.i
+
+CMakeFiles/cl_cppgame.dir/Alien.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cl_cppgame.dir/Alien.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/finn/funcaround/Alien.cpp -o CMakeFiles/cl_cppgame.dir/Alien.cpp.s
+
+CMakeFiles/cl_cppgame.dir/Alien.cpp.o.requires:
+
+.PHONY : CMakeFiles/cl_cppgame.dir/Alien.cpp.o.requires
+
+CMakeFiles/cl_cppgame.dir/Alien.cpp.o.provides: CMakeFiles/cl_cppgame.dir/Alien.cpp.o.requires
+	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Alien.cpp.o.provides.build
+.PHONY : CMakeFiles/cl_cppgame.dir/Alien.cpp.o.provides
+
+CMakeFiles/cl_cppgame.dir/Alien.cpp.o.provides.build: CMakeFiles/cl_cppgame.dir/Alien.cpp.o
+
+
 CMakeFiles/cl_cppgame.dir/client.cpp.o: CMakeFiles/cl_cppgame.dir/flags.make
 CMakeFiles/cl_cppgame.dir/client.cpp.o: client.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/finn/qtcreator/cppgame/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/cl_cppgame.dir/client.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cl_cppgame.dir/client.cpp.o -c /home/finn/qtcreator/cppgame/client.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/finn/funcaround/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/cl_cppgame.dir/client.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cl_cppgame.dir/client.cpp.o -c /home/finn/funcaround/client.cpp
 
 CMakeFiles/cl_cppgame.dir/client.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cl_cppgame.dir/client.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/finn/qtcreator/cppgame/client.cpp > CMakeFiles/cl_cppgame.dir/client.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/finn/funcaround/client.cpp > CMakeFiles/cl_cppgame.dir/client.cpp.i
 
 CMakeFiles/cl_cppgame.dir/client.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cl_cppgame.dir/client.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/finn/qtcreator/cppgame/client.cpp -o CMakeFiles/cl_cppgame.dir/client.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/finn/funcaround/client.cpp -o CMakeFiles/cl_cppgame.dir/client.cpp.s
 
 CMakeFiles/cl_cppgame.dir/client.cpp.o.requires:
 
@@ -83,15 +227,29 @@ CMakeFiles/cl_cppgame.dir/client.cpp.o.provides.build: CMakeFiles/cl_cppgame.dir
 
 # Object files for target cl_cppgame
 cl_cppgame_OBJECTS = \
+"CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o" \
+"CMakeFiles/cl_cppgame.dir/Actor.cpp.o" \
+"CMakeFiles/cl_cppgame.dir/network.cpp.o" \
+"CMakeFiles/cl_cppgame.dir/Weapon.cpp.o" \
+"CMakeFiles/cl_cppgame.dir/Human.cpp.o" \
+"CMakeFiles/cl_cppgame.dir/Alien.cpp.o" \
 "CMakeFiles/cl_cppgame.dir/client.cpp.o"
 
 # External object files for target cl_cppgame
 cl_cppgame_EXTERNAL_OBJECTS =
 
+cl_cppgame: CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o
+cl_cppgame: CMakeFiles/cl_cppgame.dir/Actor.cpp.o
+cl_cppgame: CMakeFiles/cl_cppgame.dir/network.cpp.o
+cl_cppgame: CMakeFiles/cl_cppgame.dir/Weapon.cpp.o
+cl_cppgame: CMakeFiles/cl_cppgame.dir/Human.cpp.o
+cl_cppgame: CMakeFiles/cl_cppgame.dir/Alien.cpp.o
 cl_cppgame: CMakeFiles/cl_cppgame.dir/client.cpp.o
 cl_cppgame: CMakeFiles/cl_cppgame.dir/build.make
+cl_cppgame: /usr/lib64/libGLEW.so
+cl_cppgame: /usr/lib64/libGLU.so
 cl_cppgame: CMakeFiles/cl_cppgame.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/finn/qtcreator/cppgame/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable cl_cppgame"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/finn/funcaround/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable cl_cppgame"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cl_cppgame.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -99,6 +257,12 @@ CMakeFiles/cl_cppgame.dir/build: cl_cppgame
 
 .PHONY : CMakeFiles/cl_cppgame.dir/build
 
+CMakeFiles/cl_cppgame.dir/requires: CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o.requires
+CMakeFiles/cl_cppgame.dir/requires: CMakeFiles/cl_cppgame.dir/Actor.cpp.o.requires
+CMakeFiles/cl_cppgame.dir/requires: CMakeFiles/cl_cppgame.dir/network.cpp.o.requires
+CMakeFiles/cl_cppgame.dir/requires: CMakeFiles/cl_cppgame.dir/Weapon.cpp.o.requires
+CMakeFiles/cl_cppgame.dir/requires: CMakeFiles/cl_cppgame.dir/Human.cpp.o.requires
+CMakeFiles/cl_cppgame.dir/requires: CMakeFiles/cl_cppgame.dir/Alien.cpp.o.requires
 CMakeFiles/cl_cppgame.dir/requires: CMakeFiles/cl_cppgame.dir/client.cpp.o.requires
 
 .PHONY : CMakeFiles/cl_cppgame.dir/requires
@@ -108,6 +272,6 @@ CMakeFiles/cl_cppgame.dir/clean:
 .PHONY : CMakeFiles/cl_cppgame.dir/clean
 
 CMakeFiles/cl_cppgame.dir/depend:
-	cd /home/finn/qtcreator/cppgame && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/finn/qtcreator/cppgame /home/finn/qtcreator/cppgame /home/finn/qtcreator/cppgame /home/finn/qtcreator/cppgame /home/finn/qtcreator/cppgame/CMakeFiles/cl_cppgame.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/finn/funcaround && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/finn/funcaround /home/finn/funcaround /home/finn/funcaround /home/finn/funcaround /home/finn/funcaround/CMakeFiles/cl_cppgame.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/cl_cppgame.dir/depend
 
