@@ -33,7 +33,6 @@ enum actions_t { // up to 64 different actions
     USE
 };
 
-uint64_t MV_START
 
 
 #endif // TYPES_HPP

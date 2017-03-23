@@ -1,183 +1,181 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="6" />
+	<FileVersion major="1" minor="6"/>
 	<Project>
-		<Option title="cppgame" />
-		<Option makefile_is_custom="1" />
-		<Option compiler="gcc" />
-		<Option virtualFolders="CMake Files/;" />
+		<Option title="cppgame"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option type="4" />
-				<Option compiler="gcc" />
+				<Option working_dir="/home/finn/funcaround"/>
+				<Option type="4"/>
 				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 all' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
-				</MakeCommands>
-			</Target>
-			<Target title="edit_cache">
-				<Option type="4" />
-				<Option compiler="gcc" />
-				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 edit_cache' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+					<Build command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option type="4" />
-				<Option compiler="gcc" />
+				<Option working_dir="/home/finn/funcaround"/>
+				<Option type="4"/>
 				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 rebuild_cache' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
-				</MakeCommands>
-			</Target>
-			<Target title="cl_cppgame">
-				<Option output="/home/finn/funcaround/cl_cppgame" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="/home/finn/funcaround" />
-				<Option object_output="./" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add directory="/home/finn/funcaround" />
-				</Compiler>
-				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 cl_cppgame' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
-				</MakeCommands>
-			</Target>
-			<Target title="cl_cppgame/fast">
-				<Option output="/home/finn/funcaround/cl_cppgame" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="/home/finn/funcaround" />
-				<Option object_output="./" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add directory="/home/finn/funcaround" />
-				</Compiler>
-				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 cl_cppgame/fast' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+					<Build command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="sv_cppgame">
-				<Option output="/home/finn/funcaround/sv_cppgame" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="/home/finn/funcaround" />
-				<Option object_output="./" />
-				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option output="/home/finn/funcaround/sv_cppgame" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/finn/funcaround"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/finn/funcaround" />
+					<Add directory="/home/finn/funcaround"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 sv_cppgame' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+					<Build command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 sv_cppgame"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="sv_cppgame/fast">
-				<Option output="/home/finn/funcaround/sv_cppgame" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="/home/finn/funcaround" />
-				<Option object_output="./" />
-				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option output="/home/finn/funcaround/sv_cppgame" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/finn/funcaround"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/finn/funcaround" />
+					<Add directory="/home/finn/funcaround"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 sv_cppgame/fast' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean' />
-					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+					<Build command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 sv_cppgame/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cl_cppgame">
+				<Option output="/home/finn/funcaround/cl_cppgame" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/finn/funcaround"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/finn/funcaround"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 cl_cppgame"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cl_cppgame/fast">
+				<Option output="/home/finn/funcaround/cl_cppgame" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/finn/funcaround"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/finn/funcaround"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 cl_cppgame/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="CODEBLOCKS_PROJECT">
+				<Option working_dir="/home/finn/funcaround"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 CODEBLOCKS_PROJECT"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/finn/funcaround"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/finn/funcaround/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="Actor.cpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/Actor.cpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="Actor.hpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/Actor.hpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="Alien.cpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/Alien.cpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="Alien.hpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/Alien.hpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="CMakeLists.txt">
-			<Option virtualFolder="CMake Files/" />
+		<Unit filename="/home/finn/funcaround/Drawable.cpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="Human.cpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/Drawable.hpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="Human.hpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/DrawablePrimitive.cpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="Weapon.cpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/DrawablePrimitive.hpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="Weapon.hpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/Human.cpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="WorldObject.cpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/Human.hpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="WorldObject.hpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/Weapon.cpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="client.cpp">
-			<Option target="cl_cppgame" />
+		<Unit filename="/home/finn/funcaround/Weapon.hpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="network.cpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/client.cpp">
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="network.hpp">
-			<Option target="cl_cppgame" />
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/network.cpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="server.cpp">
-			<Option target="sv_cppgame" />
+		<Unit filename="/home/finn/funcaround/network.hpp">
+			<Option target="sv_cppgame"/>
+			<Option target="cl_cppgame"/>
 		</Unit>
-		<Unit filename="types.hpp" />
-		<Extensions>
-			<envvars />
-			<code_completion />
-			<debugger />
-		</Extensions>
+		<Unit filename="/home/finn/funcaround/server.cpp">
+			<Option target="sv_cppgame"/>
+		</Unit>
+		<Unit filename="/home/finn/funcaround/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
 	</Project>
 </CodeBlocks_project_file>

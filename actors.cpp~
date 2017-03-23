@@ -1,0 +1,10 @@
+class actor {
+public:
+  uint64_t actions_base;
+  uint64_t attributes_base;
+};
+
+struct actions {
+  uint64_t available;
+  uint64_t this_turn;  
+};

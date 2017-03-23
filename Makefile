@@ -136,156 +136,6 @@ sv_cppgame/fast:
 	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/build
 .PHONY : sv_cppgame/fast
 
-Actor.o: Actor.cpp.o
-
-.PHONY : Actor.o
-
-# target to build an object file
-Actor.cpp.o:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Actor.cpp.o
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Actor.cpp.o
-.PHONY : Actor.cpp.o
-
-Actor.i: Actor.cpp.i
-
-.PHONY : Actor.i
-
-# target to preprocess a source file
-Actor.cpp.i:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Actor.cpp.i
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Actor.cpp.i
-.PHONY : Actor.cpp.i
-
-Actor.s: Actor.cpp.s
-
-.PHONY : Actor.s
-
-# target to generate assembly for a file
-Actor.cpp.s:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Actor.cpp.s
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Actor.cpp.s
-.PHONY : Actor.cpp.s
-
-Alien.o: Alien.cpp.o
-
-.PHONY : Alien.o
-
-# target to build an object file
-Alien.cpp.o:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Alien.cpp.o
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Alien.cpp.o
-.PHONY : Alien.cpp.o
-
-Alien.i: Alien.cpp.i
-
-.PHONY : Alien.i
-
-# target to preprocess a source file
-Alien.cpp.i:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Alien.cpp.i
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Alien.cpp.i
-.PHONY : Alien.cpp.i
-
-Alien.s: Alien.cpp.s
-
-.PHONY : Alien.s
-
-# target to generate assembly for a file
-Alien.cpp.s:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Alien.cpp.s
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Alien.cpp.s
-.PHONY : Alien.cpp.s
-
-Human.o: Human.cpp.o
-
-.PHONY : Human.o
-
-# target to build an object file
-Human.cpp.o:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Human.cpp.o
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Human.cpp.o
-.PHONY : Human.cpp.o
-
-Human.i: Human.cpp.i
-
-.PHONY : Human.i
-
-# target to preprocess a source file
-Human.cpp.i:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Human.cpp.i
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Human.cpp.i
-.PHONY : Human.cpp.i
-
-Human.s: Human.cpp.s
-
-.PHONY : Human.s
-
-# target to generate assembly for a file
-Human.cpp.s:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Human.cpp.s
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Human.cpp.s
-.PHONY : Human.cpp.s
-
-Weapon.o: Weapon.cpp.o
-
-.PHONY : Weapon.o
-
-# target to build an object file
-Weapon.cpp.o:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Weapon.cpp.o
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Weapon.cpp.o
-.PHONY : Weapon.cpp.o
-
-Weapon.i: Weapon.cpp.i
-
-.PHONY : Weapon.i
-
-# target to preprocess a source file
-Weapon.cpp.i:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Weapon.cpp.i
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Weapon.cpp.i
-.PHONY : Weapon.cpp.i
-
-Weapon.s: Weapon.cpp.s
-
-.PHONY : Weapon.s
-
-# target to generate assembly for a file
-Weapon.cpp.s:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/Weapon.cpp.s
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/Weapon.cpp.s
-.PHONY : Weapon.cpp.s
-
-WorldObject.o: WorldObject.cpp.o
-
-.PHONY : WorldObject.o
-
-# target to build an object file
-WorldObject.cpp.o:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/WorldObject.cpp.o
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/WorldObject.cpp.o
-.PHONY : WorldObject.cpp.o
-
-WorldObject.i: WorldObject.cpp.i
-
-.PHONY : WorldObject.i
-
-# target to preprocess a source file
-WorldObject.cpp.i:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/WorldObject.cpp.i
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/WorldObject.cpp.i
-.PHONY : WorldObject.cpp.i
-
-WorldObject.s: WorldObject.cpp.s
-
-.PHONY : WorldObject.s
-
-# target to generate assembly for a file
-WorldObject.cpp.s:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/WorldObject.cpp.s
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/WorldObject.cpp.s
-.PHONY : WorldObject.cpp.s
-
 client.o: client.cpp.o
 
 .PHONY : client.o
@@ -312,36 +162,6 @@ client.s: client.cpp.s
 client.cpp.s:
 	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/client.cpp.s
 .PHONY : client.cpp.s
-
-network.o: network.cpp.o
-
-.PHONY : network.o
-
-# target to build an object file
-network.cpp.o:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/network.cpp.o
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/network.cpp.o
-.PHONY : network.cpp.o
-
-network.i: network.cpp.i
-
-.PHONY : network.i
-
-# target to preprocess a source file
-network.cpp.i:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/network.cpp.i
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/network.cpp.i
-.PHONY : network.cpp.i
-
-network.s: network.cpp.s
-
-.PHONY : network.s
-
-# target to generate assembly for a file
-network.cpp.s:
-	$(MAKE) -f CMakeFiles/cl_cppgame.dir/build.make CMakeFiles/cl_cppgame.dir/network.cpp.s
-	$(MAKE) -f CMakeFiles/sv_cppgame.dir/build.make CMakeFiles/sv_cppgame.dir/network.cpp.s
-.PHONY : network.cpp.s
 
 server.o: server.cpp.o
 
@@ -380,27 +200,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... cl_cppgame"
 	@echo "... sv_cppgame"
-	@echo "... Actor.o"
-	@echo "... Actor.i"
-	@echo "... Actor.s"
-	@echo "... Alien.o"
-	@echo "... Alien.i"
-	@echo "... Alien.s"
-	@echo "... Human.o"
-	@echo "... Human.i"
-	@echo "... Human.s"
-	@echo "... Weapon.o"
-	@echo "... Weapon.i"
-	@echo "... Weapon.s"
-	@echo "... WorldObject.o"
-	@echo "... WorldObject.i"
-	@echo "... WorldObject.s"
 	@echo "... client.o"
 	@echo "... client.i"
 	@echo "... client.s"
-	@echo "... network.o"
-	@echo "... network.i"
-	@echo "... network.s"
 	@echo "... server.o"
 	@echo "... server.i"
 	@echo "... server.s"

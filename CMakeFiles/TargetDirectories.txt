@@ -1,4 +1,0 @@
-/home/finn/funcaround/CMakeFiles/edit_cache.dir
-/home/finn/funcaround/CMakeFiles/rebuild_cache.dir
-/home/finn/funcaround/CMakeFiles/cl_cppgame.dir
-/home/finn/funcaround/CMakeFiles/sv_cppgame.dir
