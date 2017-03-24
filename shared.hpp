@@ -17,6 +17,12 @@ enum client_commands {
 
 namespace shared {
 
+  //correspond to client_commands
+  //string constants include null terminator?
+  const char* cmd_format_strings[] = {
+    "%s"
+  };
+
   int createSocket(const unsigned int localPort) {
     int sockfd = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
     if ( sockfd<0 ) {
@@ -44,7 +50,7 @@ namespace shared {
     }
   }
 
-  bool tickStart(double ticksPerSec,timeval *tickStart) {
+  bool tickStart(double ticksPerSec,timeval *tickStart) { // use glfw time source?
     double tickDuration = (1/(double)ticksPerSec) * 1000000;
     timeval now, diff;
     gettimeofday(&now,NULL);

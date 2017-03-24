@@ -109,7 +109,7 @@ int main() {
   Json::FastWriter jsonWriter;
   Json::Value jsonSend;
   jsonSend["cnm"] = CMD_PLAYER_NAME; // command to execute on server
-  jsonSend["cvl"] = "clean" // value of command, can be array if cmd takes multiple arguments
+  jsonSend["cvl"] = "clean"; // value of command, can be array if cmd takes multiple arguments
   std::string jsonSend_str;
   gettimeofday(&tickStart,NULL);
   while( !glfwWindowShouldClose(window) ) {

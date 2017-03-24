@@ -37,3 +37,7 @@ Makefile
 
 # emacs/nano backups
 *~
+
+#exec
+cl_cppgame
+sv_cppgame
