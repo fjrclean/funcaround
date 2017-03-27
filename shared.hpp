@@ -10,6 +10,12 @@
 #include <stdarg.h>
 
 #define LOG_ERROR -1
+#define LOG_NET 4
+
+const int DGRAM_SIZE=1400; //bytes?
+const int VERSION=1; // number to compare client/server versions.
+//any json root must be split if bigger
+const int PLAYER_NAME_SIZE=32;
 
 enum client_commands {
   CMD_PLAYER_NAME
@@ -39,6 +45,7 @@ namespace shared {
     return sockfd;
   }
 
+  //  void log(int,int,const char*,...) __attribute__ ((pure));
   void log(int globalVerb,int messgVerb,const char*message, ...) {
     if ( messgVerb<=globalVerb ) {
       printf("%d: ",messgVerb);
@@ -48,6 +55,8 @@ namespace shared {
       va_end(valist);
       printf("\n");
     }
+    //    if ( messgVerb==LOG_NETMSG && )
+      // print to net messg log file
   }
 
   bool tickStart(double ticksPerSec,timeval *tickStart) { // use glfw time source?

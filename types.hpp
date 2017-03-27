@@ -1,10 +1,7 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
-const int DGRAM_SIZE=1400; //bytes?
-const int VERSION=1; // number to compare client/server versions.
-//any json root must be split if bigger
-
+// all should be moved into other files such as actions.hpp or shared.hpp
 enum direction_t {
     FORWARD=1,
     LEFT=2,

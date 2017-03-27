@@ -18,7 +18,6 @@
 #define WAIT_PLAYER_MIA 5 // time to wait, in seconds, before dropping player who has sent no legible data
 
 int main(int argc, char* args[]) {
-  printf("%d",sizeof(client_commands));
     /** GAME OPTIONS **/
     unsigned int listenPort = 5666;
     unsigned int maxPlayers = 3;
@@ -41,24 +40,35 @@ int main(int argc, char* args[]) {
       sockaddr_in remote;
       unsigned int actorId;
       unsigned int time_since_last; // since last received, as game ticks
+      bool received_msg;
     };
-    struct connection_t {
+    struct player_socket_t {
         int fd;
         unsigned int port;
-      char *playerName;
+      char *playerName; // change to array like msg
+      char msg[DGRAM_SIZE];
       player_t player; // this should be cleared each time connection becomes free
+      player_socket_t *next;
+      player_socket_t *prev;
     };
-    connection_t *playerSockets = (connection_t*)malloc(sizeof(connection_t)*maxPlayers);
-    std::vector<connection_t*> freePlayerSockets;
+    player_socket_t *freePlayerSocket = NULL;
+    // create a linked list of available sockets for players.
     for ( unsigned int i=0;i<maxPlayers;i++ ) {
-        playerSockets[i].port = i+1+listenPort;
-        playerSockets[i].fd =  shared::createSocket(playerSockets[i].port);
-	playerSockets[i].playerName = (char*)malloc(32);
-	memset((void*)&playerSockets[i].player,0,sizeof(player_t));
-        freePlayerSockets.push_back(&playerSockets[i]);
-	shared::log(globVerb,3,"player socket created: fd:%d port:%u",freePlayerSockets.back()->fd,freePlayerSockets.back()->port);
+      player_socket_t *socket = (player_socket_t*)malloc(sizeof(socket));
+      socket->port = i+1+listenPort;
+      socket->fd =  shared::createSocket(socket->port);
+      socket->playerName = (char*)malloc(32);
+      socket->prev = NULL;
+      if ( freePlayerSocket!=NULL )
+	freePlayerSocket->prev = socket;
+      socket->next = freePlayerSocket;
+      memset((void*)&socket->player,0,sizeof(player_t));
+      freePlayerSocket = socket;
+      shared::log(globVerb,3,"player socket created: fd:%d port:%u",freePlayerSocket->fd,freePlayerSocket->port);
     }
-    std::vector<connection_t*> usedPlayerSockets;
+    player_socket_t *usedPlayerSocket = NULL;
+    unsigned int usedPlayerCount = 0;
+    unsigned int freePlayerCount = 0;
     // I think MSG_DONTWAIT still ensures if it reads anything, it will read the whole dgram.
     // So no possibility of reading incomplete messages unless they are too large and split into multiple dgrams?
     const int recv_flags = MSG_DONTWAIT | MSG_TRUNC;// | MSG_WAITALL;
@@ -68,63 +78,71 @@ int main(int argc, char* args[]) {
     timeval tickStart;
     gettimeofday(&tickStart,NULL);
     while ( true ) {
-      /** WAIT LOOP **/
-      std::vector<bool> dgramReceived;
-      for ( int i=0; i<usedPlayerSockets.size(); i++ ) {
-	dgramReceived.push_back(false);
-	usedPlayerSockets.at(i)->player.time_since_last+=1;
+      player_socket_t *socket = usedPlayerSocket;
+      for ( int i=1; i<=usedPlayerCount; i++ ) {
+	socket->player.received_msg=false;
+	socket->player.time_since_last+=1;
+	if ( (socket->player.time_since_last/ticksPerSec)>WAIT_PLAYER_MIA ) { // drop player
+	  if ( socket->next!=NULL )
+	    socket->next->prev = socket->prev;
+	  if ( socket->prev!=NULL )
+	    socket->prev->next = socket->next;
+	  usedPlayerSocket = socket->next;
+	  usedPlayerCount--;
+	  i--;
+	  if ( freePlayerSocket!=NULL ) 
+	    freePlayerSocket->prev = socket;
+	  freePlayerSocket = socket;
+	  memset((void*)freePlayerSocket->playerName,0,32);
+	  memset((void*)&freePlayerSocket->player,0,sizeof(player_t));	    
+	  // remove their actor from game too (with necessary cleanup)
+	  // perhaps send message to client, saying they have been dropped, reasons
+	  shared::log(globVerb,1,"Player %s left. Reason: lost sync too long.",socket->playerName);
+	  continue;	  
+	}
       }
-      while ( !shared::tickStart(ticksPerSec,&tickStart) ) { // pause game loop until time for next tick.
+      /** WAIT LOOP **/
+      do { // do wait loop at least once, and then additionally until next tick
 	/** RECEIVE NET MSG FROM PLAYER **/ {
 	  jsonFromPlayers.clear();
-	  for ( int i=0; i<usedPlayerSockets.size(); i++ ) {
-	    if ( dgramReceived.at(i) )
+	  socket = usedPlayerSocket;
+	  for ( int i=0; i<usedPlayerCount; i++ ) {
+	    if ( socket->player.received_msg==true )
 	      continue;
-	    connection_t *playerSck = usedPlayerSockets.at(i);
-	    if ( (playerSck->player.time_since_last/ticksPerSec)>WAIT_PLAYER_MIA ) {
-	      freePlayerSockets.push_back(usedPlayerSockets.at(i));
-	      usedPlayerSockets.erase(usedPlayerSockets.begin()+i); // drop player
-	      memset((void*)freePlayerSockets.back()->playerName,0,32);
-	      memset((void*)&freePlayerSockets.back()->player,0,sizeof(player_t));	    
-	      // remove their actor from game too (with necessary cleanup)
-	      // perhaps send message to client, saying they have been dropped, reasons
-	      std::cout << "player " << i << " dropped. reason: mia" << std::endl;
-	      i-=1;
-	      continue;
-	    }
 	    sockaddr_in srcAddr;
 	    socklen_t srcAddrSz = sizeof(srcAddr);
 	    memset(&srcAddr,0,srcAddrSz);
 	    char dgram[DGRAM_SIZE];
-	    memset(&dgram,0,DGRAM_SIZE);
+	    memset(socket->msg,0,DGRAM_SIZE);
 	    int j;
-	    if ( (j=recvfrom(playerSck->fd,(void *) &dgram,DGRAM_SIZE,recv_flags,(sockaddr*)&srcAddr,&srcAddrSz))<0
+	    if ( (j=recvfrom(socket->fd,(void*)&socket->msg,DGRAM_SIZE,recv_flags,(sockaddr*)&srcAddr,&srcAddrSz))<0
 		 && errno!=0 && errno!=EAGAIN && errno!=EWOULDBLOCK ) { // with MSG_DONTWAIT errors are returned if would have to block
-	      std::cerr << "Error on listen socket: " << errno << std::endl;
+	      shared::log(globVerb,LOG_ERROR,"Receive from player socket");
 	      return -1;
 	    }
 	    Json::Value receive;
 	    Json::Reader jsonReader;
 	    Json::Value send;
 	    Json::FastWriter jsonWriter;
-	    if ( j>0 && srcAddr.sin_port==playerSck->player.remote.sin_port && srcAddr.sin_addr.s_addr==playerSck->player.remote.sin_addr.s_addr ) {
-	      jsonReader.parse(dgram,dgram+(DGRAM_SIZE-1),receive,false);
+	    if ( j>0 && srcAddr.sin_port==socket->player.remote.sin_port && srcAddr.sin_addr.s_addr==socket->player.remote.sin_addr.s_addr ) {
+	      jsonReader.parse(socket->msg,socket->msg+(DGRAM_SIZE-1),receive,false);
 	    }
-	    std::cout << playerSck->player.time_since_last << ":" << jsonReader.good() << std::endl;
+	    std::cout << socket->player.time_since_last << ":" << jsonReader.good() << std::endl;
 	    if ( !jsonReader.good() || j<=0 ) { 
 	      // player data corrupted, add notice of this to game state sent to this player
 	      continue;
 	    }
-	    dgramReceived.at(i) = true;
+	    socket->player.received_msg = true;
 	    std::cout << "received" << std::endl;
-	    receive["actor"] = playerSck->player.actorId;
+	    //	    receive["actor"] = playerSck->player.actorId;
 	    receive["id"] = i;
 	    jsonFromPlayers.push_back(receive);
-	    playerSck->player.time_since_last=0;
+	    socket->player.time_since_last=0;
 	  }
 	}
 
-      }
+      } while ( !shared::tickStart(ticksPerSec,&tickStart) );
+
       /** END WAIT LOOP **/
 		
 
@@ -133,8 +151,8 @@ int main(int argc, char* args[]) {
 	  int id = jsonFromPlayers.at(i)["id"].asInt();
 	  switch (jsonFromPlayers.at(i)["cnm"].asInt()) {
 	  case CMD_PLAYER_NAME:
-	    strcpy(usedPlayerSockets.at(id)->playerName,jsonFromPlayers.at(i)["cvl"].asCString());
-	    shared::log(globVerb,3,"player id:%d set name to:%s",jsonFromPlayers.at(i)["id"].asInt(),usedPlayerSockets.at(id)->playerName);
+	    //strcpy(usedPlayerSockets.at(id)->playerName,jsonFromPlayers.at(i)["cvl"].asCString());
+	    //shared::log(globVerb,3,"player id:%d set name to:%s",jsonFromPlayers.at(i)["id"].asInt(),usedPlayerSockets.at(id)->playerName);
 	    break;
 	  default:
 	    break;
@@ -177,10 +195,11 @@ int main(int argc, char* args[]) {
         Json::FastWriter jsonWriter;
         send["acc"] = false;
         send["rea"] = "full";
-        if ( freePlayerSockets.size()>0 ) {
+        if ( freePlayerSocket!=NULL ) {
             send["acc"] = true;
-	    send["prt"] = freePlayerSockets.back()->port;
+	    send["prt"] = freePlayerSocket->port;
 	}
+	// we can set name and join preferences like team here
         jsonReader.parse(dgram,dgram+(DGRAM_SIZE-1),receive,false);
 	if ( receive["ver"] != VERSION ) {
 	  send["acc"] = false;
@@ -202,10 +221,17 @@ int main(int argc, char* args[]) {
 	  }
 	  std::cout << "sent reply " << send.get("acc","error").asString() << std::endl;
 	  if ( send.get("acc","error").asBool() == true ) {
-	    usedPlayerSockets.push_back(freePlayerSockets.back());
-	    freePlayerSockets.pop_back();
-	    usedPlayerSockets.back()->player.remote = srcAddr;
-	    std::cout << "player " << usedPlayerSockets.size() << " joined on port " << usedPlayerSockets.back()->port << std::endl;
+	    player_socket_t *socket = freePlayerSocket;
+	    if ( usedPlayerSocket!=NULL )
+	      usedPlayerSocket->prev = socket;
+	    freePlayerSocket = freePlayerSocket->next;
+	    if ( freePlayerSocket!=NULL )
+	      freePlayerSocket->prev = NULL;
+	    socket->next = usedPlayerSocket;
+	    usedPlayerSocket = socket;
+	    usedPlayerSocket->player.remote = srcAddr;
+	    usedPlayerCount++;
+	    std::cout << "player " << usedPlayerCount << " joined on port " << usedPlayerSocket->port << std::endl;
 	  }
 	}
 

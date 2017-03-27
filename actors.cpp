@@ -4,12 +4,25 @@ enum actor_types {
   WEAPON_ALIEN_RIFLE
 };
 
-class actor {
-public:
-  uint64_t actions_base;
-  uint64_t attributes_base;
-  uint64_t actions_available;
-  uint64_t actions_this_turn;
+char *varBufFormatStrings[] = {
+
+}
+
+struct actor {
+  char *varBuf;
+  char *varBufFormatString;
+  void *runFunction;
+  uint64_t actions_type;
+  uint64_t attributes_type;
+  uint64_t actions_instance;
+  uint64_t actions_run;
+  uint64_t actions_pass;
   actor_types actor_type;
+  unsigned int actionPass[];
 };
+
+//each actor type file should include actors.hpp
+void example_actor_main(uint64_t *actions,uint64_t *attributes,
+
+int createActor(actor_types type,
 
