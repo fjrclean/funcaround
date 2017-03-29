@@ -9,6 +9,7 @@
 #include <sstream>
 #include <cerrno>
 #include <cstring>
+#include <assert.h>
 
 #include <sys/time.h>
 
@@ -36,68 +37,54 @@ int main(int argc, char* args[]) {
     
     /** NETWORK SETUP **/
     const int listenSocket = shared::createSocket(listenPort);
-    struct player_t {
+    struct player_unique {
       sockaddr_in remote;
       unsigned int actorId;
-      unsigned int time_since_last; // since last received, as game ticks
-      bool received_msg;
+      unsigned int ticksSinceLast; // since last received, as game ticks
+      char playerName[PLAYER_NAME_SIZE];
     };
-    struct player_socket_t {
-        int fd;
-        unsigned int port;
-      char *playerName; // change to array like msg
+    struct player_t {
+      int fd;
+      unsigned int port;
+      unsigned int id;
+      bool receivedMsg;
       char msg[DGRAM_SIZE];
-      player_t player; // this should be cleared each time connection becomes free
-      player_socket_t *next;
-      player_socket_t *prev;
+      bool inUse;
+      player_unique unique; // this should be cleared each time connection becomes free
     };
-    player_socket_t *freePlayerSocket = NULL;
-    // create a linked list of available sockets for players.
-    for ( unsigned int i=0;i<maxPlayers;i++ ) {
-      player_socket_t *socket = (player_socket_t*)malloc(sizeof(socket));
-      socket->port = i+1+listenPort;
-      socket->fd =  shared::createSocket(socket->port);
-      socket->playerName = (char*)malloc(32);
-      socket->prev = NULL;
-      if ( freePlayerSocket!=NULL )
-	freePlayerSocket->prev = socket;
-      socket->next = freePlayerSocket;
-      memset((void*)&socket->player,0,sizeof(player_t));
-      freePlayerSocket = socket;
-      shared::log(globVerb,3,"player socket created: fd:%d port:%u",freePlayerSocket->fd,freePlayerSocket->port);
+    player_t playerSckts[maxPlayers];
+    for ( int i=0; i<maxPlayers; i++ ) {
+      // does compiler combine all playerSckts[i] into one and then just use address from that?
+      // so it doesn't have to do arithmetic to convert index to pointer more than once.
+      playerSckts[i].port = listenPort+1+i; 
+      playerSckts[i].fd =  shared::createSocket(playerSckts[i].port);
+      playerSckts[i].inUse = false;
+      playerSckts[i].id = i;
+      memset((void*)&playerSckts[i].unique,0,sizeof(player_unique));
+      shared::log(globVerb,3,"player socket created: fd:%d port:%u",playerSckts[i].fd,playerSckts[i].port);
     }
-    player_socket_t *usedPlayerSocket = NULL;
-    unsigned int usedPlayerCount = 0;
-    unsigned int freePlayerCount = 0;
+    player_t *freePlayer_p = NULL;
     // I think MSG_DONTWAIT still ensures if it reads anything, it will read the whole dgram.
     // So no possibility of reading incomplete messages unless they are too large and split into multiple dgrams?
     const int recv_flags = MSG_DONTWAIT | MSG_TRUNC;// | MSG_WAITALL;
     std::vector<Json::Value> jsonFromPlayers;
-    
+
     /** GAME LOOP **/ {
     timeval tickStart;
     gettimeofday(&tickStart,NULL);
     while ( true ) {
-      player_socket_t *socket = usedPlayerSocket;
-      for ( int i=1; i<=usedPlayerCount; i++ ) {
-	socket->player.received_msg=false;
-	socket->player.time_since_last+=1;
-	if ( (socket->player.time_since_last/ticksPerSec)>WAIT_PLAYER_MIA ) { // drop player
-	  if ( socket->next!=NULL )
-	    socket->next->prev = socket->prev;
-	  if ( socket->prev!=NULL )
-	    socket->prev->next = socket->next;
-	  usedPlayerSocket = socket->next;
-	  usedPlayerCount--;
-	  i--;
-	  if ( freePlayerSocket!=NULL ) 
-	    freePlayerSocket->prev = socket;
-	  freePlayerSocket = socket;
-	  memset((void*)freePlayerSocket->playerName,0,32);
-	  memset((void*)&freePlayerSocket->player,0,sizeof(player_t));	    
+      for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
+	i->receivedMsg=false;
+	i->unique.ticksSinceLast+=1;
+	if ( (i->unique.ticksSinceLast/ticksPerSec)>WAIT_PLAYER_MIA && i->inUse ) { // drop player
+	  // without inUse check this continuously runs for dropped player??
+	  // first conditional should be enough, as any player dropped as their ticksSinceLast set
+	  // to zero through memset below.
+	  i->inUse = false;
 	  // remove their actor from game too (with necessary cleanup)
 	  // perhaps send message to client, saying they have been dropped, reasons
-	  shared::log(globVerb,1,"Player %s left. Reason: lost sync too long.",socket->playerName);
+	  shared::log(globVerb,1,"Player %u left. Reason: lost sync too long.",i->id);
+	  memset((void*)&i->unique,0,sizeof(player_unique));
 	  continue;	  
 	}
       }
@@ -105,17 +92,20 @@ int main(int argc, char* args[]) {
       do { // do wait loop at least once, and then additionally until next tick
 	/** RECEIVE NET MSG FROM PLAYER **/ {
 	  jsonFromPlayers.clear();
-	  socket = usedPlayerSocket;
-	  for ( int i=0; i<usedPlayerCount; i++ ) {
-	    if ( socket->player.received_msg==true )
+	  for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
+	    if ( i->inUse==false ) {
+	      freePlayer_p = i;
+	      continue;
+	    }
+	    if ( i->receivedMsg==true )
 	      continue;
 	    sockaddr_in srcAddr;
 	    socklen_t srcAddrSz = sizeof(srcAddr);
 	    memset(&srcAddr,0,srcAddrSz);
-	    char dgram[DGRAM_SIZE];
-	    memset(socket->msg,0,DGRAM_SIZE);
+	    //char dgram[DGRAM_SIZE];
+	    memset(i->msg,0,DGRAM_SIZE);
 	    int j;
-	    if ( (j=recvfrom(socket->fd,(void*)&socket->msg,DGRAM_SIZE,recv_flags,(sockaddr*)&srcAddr,&srcAddrSz))<0
+	    if ( (j=recvfrom(i->fd,(void*)i->msg,DGRAM_SIZE,recv_flags,(sockaddr*)&srcAddr,&srcAddrSz))<0
 		 && errno!=0 && errno!=EAGAIN && errno!=EWOULDBLOCK ) { // with MSG_DONTWAIT errors are returned if would have to block
 	      shared::log(globVerb,LOG_ERROR,"Receive from player socket");
 	      return -1;
@@ -124,20 +114,17 @@ int main(int argc, char* args[]) {
 	    Json::Reader jsonReader;
 	    Json::Value send;
 	    Json::FastWriter jsonWriter;
-	    if ( j>0 && srcAddr.sin_port==socket->player.remote.sin_port && srcAddr.sin_addr.s_addr==socket->player.remote.sin_addr.s_addr ) {
-	      jsonReader.parse(socket->msg,socket->msg+(DGRAM_SIZE-1),receive,false);
+	    if ( j>0 && srcAddr.sin_port==i->unique.remote.sin_port && srcAddr.sin_addr.s_addr==i->unique.remote.sin_addr.s_addr ) {
+	      jsonReader.parse(i->msg,i->msg+(DGRAM_SIZE-1),receive,false);
 	    }
-	    std::cout << socket->player.time_since_last << ":" << jsonReader.good() << std::endl;
 	    if ( !jsonReader.good() || j<=0 ) { 
 	      // player data corrupted, add notice of this to game state sent to this player
 	      continue;
 	    }
-	    socket->player.received_msg = true;
-	    std::cout << "received" << std::endl;
+	    i->receivedMsg = true;
 	    //	    receive["actor"] = playerSck->player.actorId;
-	    receive["id"] = i;
 	    jsonFromPlayers.push_back(receive);
-	    socket->player.time_since_last=0;
+	    i->unique.ticksSinceLast=0;
 	  }
 	}
 
@@ -145,8 +132,13 @@ int main(int argc, char* args[]) {
 
       /** END WAIT LOOP **/
 		
-
         /** PROCESS PLAYER ACTIONS **/ {
+	for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
+	  if ( i->receivedMsg==false && i->inUse )
+	    shared::log(globVerb,3,"player %u missed sync; %u in row.",i->id,i->unique.ticksSinceLast);
+	  else if ( i->inUse )
+	    shared::log(globVerb,3,"player %u hit sync",i->id);
+	}
         for ( int i=0; i<jsonFromPlayers.size(); i++ ) {
 	  int id = jsonFromPlayers.at(i)["id"].asInt();
 	  switch (jsonFromPlayers.at(i)["cnm"].asInt()) {
@@ -195,9 +187,9 @@ int main(int argc, char* args[]) {
         Json::FastWriter jsonWriter;
         send["acc"] = false;
         send["rea"] = "full";
-        if ( freePlayerSocket!=NULL ) {
+        if ( freePlayer_p!=NULL ) {
             send["acc"] = true;
-	    send["prt"] = freePlayerSocket->port;
+	    send["prt"] = freePlayer_p->port;
 	}
 	// we can set name and join preferences like team here
         jsonReader.parse(dgram,dgram+(DGRAM_SIZE-1),receive,false);
@@ -221,17 +213,9 @@ int main(int argc, char* args[]) {
 	  }
 	  std::cout << "sent reply " << send.get("acc","error").asString() << std::endl;
 	  if ( send.get("acc","error").asBool() == true ) {
-	    player_socket_t *socket = freePlayerSocket;
-	    if ( usedPlayerSocket!=NULL )
-	      usedPlayerSocket->prev = socket;
-	    freePlayerSocket = freePlayerSocket->next;
-	    if ( freePlayerSocket!=NULL )
-	      freePlayerSocket->prev = NULL;
-	    socket->next = usedPlayerSocket;
-	    usedPlayerSocket = socket;
-	    usedPlayerSocket->player.remote = srcAddr;
-	    usedPlayerCount++;
-	    std::cout << "player " << usedPlayerCount << " joined on port " << usedPlayerSocket->port << std::endl;
+	    freePlayer_p->inUse = true;
+	    shared::log(globVerb,1,"Player %u joined on port %u",freePlayer_p->id,freePlayer_p->port);
+	    freePlayer_p = NULL;
 	  }
 	}
 

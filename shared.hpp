@@ -9,8 +9,15 @@
 
 #include <stdarg.h>
 
-#define LOG_ERROR -1
+//#define LOG_ERROR -1
 #define LOG_NET 4
+enum log_t {
+  LOG_ERROR = -1,
+  // nothing is output at 0
+  LOG_NORM = 1,
+  LOG_DETAILS = 2,
+  LOG_NETMSG = 3
+};
 
 const int DGRAM_SIZE=1400; //bytes?
 const int VERSION=1; // number to compare client/server versions.
