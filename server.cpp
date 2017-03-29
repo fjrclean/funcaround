@@ -48,7 +48,8 @@ int main(int argc, char* args[]) {
       unsigned int port;
       unsigned int id;
       bool receivedMsg;
-      char msg[DGRAM_SIZE];
+      char msg[DGRAM_SIZE+1]; // +1 is because msg always needs to end in NUL for read protection
+      // repeated in memset zero whipe so final NUL always present.
       bool inUse;
       player_unique unique; // this should be cleared each time connection becomes free
     };
@@ -75,7 +76,8 @@ int main(int argc, char* args[]) {
     while ( true ) {
       for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
 	i->receivedMsg=false;
-	i->unique.ticksSinceLast+=1;
+	if ( i->inUse )
+	  i->unique.ticksSinceLast+=1;
 	if ( (i->unique.ticksSinceLast/ticksPerSec)>WAIT_PLAYER_MIA && i->inUse ) { // drop player
 	  // without inUse check this continuously runs for dropped player??
 	  // first conditional should be enough, as any player dropped as their ticksSinceLast set
@@ -102,8 +104,7 @@ int main(int argc, char* args[]) {
 	    sockaddr_in srcAddr;
 	    socklen_t srcAddrSz = sizeof(srcAddr);
 	    memset(&srcAddr,0,srcAddrSz);
-	    //char dgram[DGRAM_SIZE];
-	    memset(i->msg,0,DGRAM_SIZE);
+	    memset(i->msg,0,DGRAM_SIZE+1); //+1 for always trailing NUL
 	    int j;
 	    if ( (j=recvfrom(i->fd,(void*)i->msg,DGRAM_SIZE,recv_flags,(sockaddr*)&srcAddr,&srcAddrSz))<0
 		 && errno!=0 && errno!=EAGAIN && errno!=EWOULDBLOCK ) { // with MSG_DONTWAIT errors are returned if would have to block
@@ -134,20 +135,36 @@ int main(int argc, char* args[]) {
 		
         /** PROCESS PLAYER ACTIONS **/ {
 	for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
-	  if ( i->receivedMsg==false && i->inUse )
+	  if ( i->receivedMsg==false && i->inUse ) {
 	    shared::log(globVerb,3,"player %u missed sync; %u in row.",i->id,i->unique.ticksSinceLast);
-	  else if ( i->inUse )
+	    continue;
+	  }
+	  if ( i->inUse )
 	    shared::log(globVerb,3,"player %u hit sync",i->id);
-	}
-        for ( int i=0; i<jsonFromPlayers.size(); i++ ) {
-	  int id = jsonFromPlayers.at(i)["id"].asInt();
-	  switch (jsonFromPlayers.at(i)["cnm"].asInt()) {
+	  uint64_t *runActions = (uint64_t *)&i->msg;
+	  unsigned int *cmdId = (unsigned int*)runActions++;
+	    // cmdId is to confirm to client what a command as been received and
+	    // to not repeat resends of same command.
+	    // Just like game state changes sent to player must be aknowledged,
+	    // but unlike commands they can be repeated since all state changes should be absolute.
+	    // Can all commands be absolute too so it does not matter if they are repeated?
+	  client_commands *cmd = (client_commands*)cmdId++;
+	  char *cmdStr = (char*)cmd++;
+	  switch (*cmd) {
+	    // code for some commands like CMD_PLAYER_NAME could be put in shared function
+	    // as if cmd is done on server, it will need to be sent back in game state to players to
+	    // be processed the same way.
 	  case CMD_PLAYER_NAME:
-	    //strcpy(usedPlayerSockets.at(id)->playerName,jsonFromPlayers.at(i)["cvl"].asCString());
-	    //shared::log(globVerb,3,"player id:%d set name to:%s",jsonFromPlayers.at(i)["id"].asInt(),usedPlayerSockets.at(id)->playerName);
+	    strcpy(i->unique.playerName,cmdStr);
+	    shared::log(globVerb,3,"player %u set name to:%s",i->id,i->unique.playerName);
 	    break;
 	  default:
 	    break;
+	  
+	  
+	}
+        for ( int i=0; i<jsonFromPlayers.size(); i++ ) {
+	  int id = jsonFromPlayers.at(i)["id"].asInt();
 	  }
 	  /* Actor &actor = actors.at(fromPlayers.at(i)["actor"]);
             Json::Value actions = fromPlayers.at(i)["actions"];
