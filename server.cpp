@@ -10,11 +10,13 @@
 #include <cerrno>
 #include <cstring>
 #include <assert.h>
+#include <assert.h>
 
 #include <sys/time.h>
 
 #include "types.hpp"
 #include "shared.hpp"
+#include "actors.hpp"
 
 #define WAIT_PLAYER_MIA 5 // time to wait, in seconds, before dropping player who has sent no legible data
 
@@ -133,63 +135,53 @@ int main(int argc, char* args[]) {
 
       /** END WAIT LOOP **/
 		
-        /** PROCESS PLAYER ACTIONS **/ {
+        /** PARSE IMMEDIATE PLAYER ACTIONS **/ {
+	// immediate means data in player message that should effect the game state sent back to player after update.
+	// non immediate actions (like console commands) can be parsed after send to player, so as to not increase latency.
 	for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
 	  if ( i->receivedMsg==false && i->inUse ) {
 	    shared::log(globVerb,3,"player %u missed sync; %u in row.",i->id,i->unique.ticksSinceLast);
 	    continue;
 	  }
-	  if ( i->inUse )
-	    shared::log(globVerb,3,"player %u hit sync",i->id);
-	  uint64_t *runActions = (uint64_t *)&i->msg;
-	  unsigned int *cmdId = (unsigned int*)runActions++;
-	    // cmdId is to confirm to client what a command as been received and
-	    // to not repeat resends of same command.
-	    // Just like game state changes sent to player must be aknowledged,
-	    // but unlike commands they can be repeated since all state changes should be absolute.
-	    // Can all commands be absolute too so it does not matter if they are repeated?
-	  client_commands *cmd = (client_commands*)cmdId++;
-	  char *cmdStr = (char*)cmd++;
-	  switch (*cmd) {
-	    // code for some commands like CMD_PLAYER_NAME could be put in shared function
-	    // as if cmd is done on server, it will need to be sent back in game state to players to
-	    // be processed the same way.
-	  case CMD_PLAYER_NAME:
-	    strcpy(i->unique.playerName,cmdStr);
-	    shared::log(globVerb,3,"player %u set name to:%s",i->id,i->unique.playerName);
-	    break;
-	  default:
-	    break;
-	  
-	  
-	}
-        for ( int i=0; i<jsonFromPlayers.size(); i++ ) {
-	  int id = jsonFromPlayers.at(i)["id"].asInt();
+	  if ( !i->inUse )
+	    continue;
+	  shared::log(globVerb,3,"player %u hit sync",i->id);
+	  char *msgWalk = i->msg;
+	  uint32_t runActions = (uint32_t)*msgWalk;
+	  msgWalk+=sizeof(uint32_t);
+	  float lookVec[3];
+	  // floats fixed in net msg?
+	  for ( float*i=lookVec; i<&lookVec[3]; i++ ) {
+	  *i = (float)*msgWalk;
+	  msgWalk+=sizeof(float);
 	  }
-	  /* Actor &actor = actors.at(fromPlayers.at(i)["actor"]);
-            Json::Value actions = fromPlayers.at(i)["actions"];
-            if ( !actions.isUInt64() ) {
-                ///TODO: if too many corrupt actions from client, take action, eg notify client
-                continue;
-            }
-            actor.actionsDo = (actions.asUInt64() & ~(actor.actionsPass));
-            uint64_t actionsPass = (actions.asUInt64() & actor.actionsPass);
-            uint64_t bitValue = 1;
-            for ( int j=0;j<64;j++ ) {
-                if ( bitValue&actionsPass!=0 ) {
-                    actor.passActionsTo[j]->actionsDo |= actor.passActionsTo[j]->actions & bitValue;
-                    if ( !actor.passActionsTo[j]->actions&bitValue )
-                        actor.actionsDo |= bitValue;
-                }
-                bitValue *= 2;
-		}*/
-	    }
-        }
+	  uint32_t actorUseId = (uint32_t)*msgWalk;
+	  //msgWalk+=sizeof(uint32_t);
+	  // Since, for now at least, all types in contiguous immediate actions area of msg are fixed size
+	  // the later non-immediate code will not need msgWalk, it can just jump the total size of immediate actions.
 
-        /** PLAYER JOINING **/ {
+	  /// @todo parse runActions,lookVec & actorUseId using player's actor.
+	  
+
+	  actor_t *actor;// = i->unique.actorId;
+	  /*	  actor.actionsDo = (actions.asUInt64() & ~(actor.actionsPass));
+	  uint64_t actionsPass = (actions.asUInt64() & actor.actionsPass);
+	  uint64_t bitValue = 1;
+	  for ( int j=0;j<64;j++ ) {
+	    if ( bitValue&actionsPass!=0 ) {
+	      actor.passActionsTo[j]->actionsDo |= actor.passActionsTo[j]->actions & bitValue;
+	      if ( !actor.passActionsTo[j]->actions&bitValue )
+		actor.actionsDo |= bitValue;
+	    }
+	    bitValue *= 2;
+	    }*/
+	}
+      }
+
+      /** PLAYER JOINING **/ {
         sockaddr_in srcAddr;
         socklen_t srcAddrSz = sizeof(srcAddr);
-        char dgram[DGRAM_SIZE];
+        static char dgram[DGRAM_SIZE];
         memset(dgram,0,DGRAM_SIZE);
         errno = 0;
 	int i=0;
@@ -198,6 +190,7 @@ int main(int argc, char* args[]) {
             //std::cerr << "Error on listen socket: " << errno << std::endl;
             //return -1;
         }
+
         Json::Value receive;
         Json::Reader jsonReader;
         Json::Value send;

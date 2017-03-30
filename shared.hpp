@@ -19,13 +19,39 @@ enum log_t {
   LOG_NETMSG = 3
 };
 
+enum vector_t {
+  X,
+  Y,
+  Z
+};
+
 const int DGRAM_SIZE=1400; //bytes?
 const int VERSION=1; // number to compare client/server versions.
 //any json root must be split if bigger
 const int PLAYER_NAME_SIZE=32;
+const int MAX_JOIN_CMDS=3;
 
-enum client_commands {
-  CMD_PLAYER_NAME
+
+// on client, commands will be prefixed with cl_ or sv_ ,
+// with sv_ being removed and rest sent to server.
+// server will never see these prefixes.
+enum commands_server {
+  CMD_SET // set a variable
+};
+
+enum variables_server { //
+  VAR_PLAYER_NAME,
+  VAR_PLACEHOLDER1,
+  VAR_PLACEHOLDER2,
+};
+
+// loop through formats with console input using sscanf. If 1 returned, you know it's valid command, and which one, but wrong arguments.
+const char varServerFormats[] = {
+  "player_name %s"
+};
+
+const char varServerHelp[] = {
+  "player_name <name>"
 };
 
 namespace shared {
