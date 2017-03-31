@@ -52,6 +52,7 @@ int main(int argc, char* args[]) {
       bool receivedMsg;
       char msg[DGRAM_SIZE+1]; // +1 is because msg always needs to end in NUL for read protection
       // repeated in memset zero whipe so final NUL always present.
+      char *msgWalk;
       bool inUse;
       player_unique unique; // this should be cleared each time connection becomes free
     };
@@ -146,21 +147,21 @@ int main(int argc, char* args[]) {
 	  if ( !i->inUse )
 	    continue;
 	  shared::log(globVerb,3,"player %u hit sync",i->id);
-	  char *msgWalk = i->msg;
-	  uint32_t runActions = (uint32_t)*msgWalk;
-	  msgWalk+=sizeof(uint32_t);
+	  i->msgWalk = i->msg;
+	  uint32_t runActions = (uint32_t)*i->msgWalk;
+	  i->msgWalk+=sizeof(uint32_t);
 	  float lookVec[3];
 	  // floats fixed in net msg?
-	  for ( float*i=lookVec; i<&lookVec[3]; i++ ) {
-	  *i = (float)*msgWalk;
-	  msgWalk+=sizeof(float);
+	  for ( float*j=lookVec; j<&lookVec[3]; j++ ) {
+	  *j = (float)*i->msgWalk;
+	  i->msgWalk+=sizeof(float);
 	  }
-	  uint32_t actorUseId = (uint32_t)*msgWalk;
-	  //msgWalk+=sizeof(uint32_t);
+	  uint32_t actorUseId = (uint32_t)*i->msgWalk;
+	  i->msgWalk+=sizeof(uint32_t);
 	  // Since, for now at least, all types in contiguous immediate actions area of msg are fixed size
-	  // the later non-immediate code will not need msgWalk, it can just jump the total size of immediate actions.
 
-	  /// @todo parse runActions,lookVec & actorUseId using player's actor.
+	  /// @todo parse runActions,lookVec & actorUseId using player's actor \
+	  and such
 	  
 
 	  actor_t *actor;// = i->unique.actorId;
@@ -231,16 +232,29 @@ int main(int argc, char* args[]) {
 
         }
 
+      /** NON-IMMEDIATE ACTIONS **/ {
+	for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
+	  // loop through number of commands in message
+	  int32_t numCmds = (int32_t)*i->msgWalk;
+	  if ( numCmds>MAX_PLAYER_CMDS ) {
+	    // handle excess commands; save them for next tick or discard and warn player
+	    numCmds=0;
+	  }
+	  for ( int32_t j=0; j<numCmds; j++ ) {
+	    i->msgWalk+=sizeof(int32_t);
+	    switch ( j )
+	  }
+	}
+      }
 
 
+      /** DO PHYSICS/COLLISION **/ {
 
-        /** DO PHYSICS/COLLISION **/ {
+      }
 
-        }
+      /** SEND UPDATES TO PLAYERS **/ {
 
-        /** SEND UPDATES TO PLAYERS **/ {
-
-        }
+      }
     }
     }
 
