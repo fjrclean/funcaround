@@ -45,3 +45,13 @@ endif (PKG_CONFIG_FOUND)
 #add_custom_target(CODEBLOCKS_PROJECT ALL
 #   COMMAND cmake . -G"CodeBlocks - Unix Makefiles"
 #)
+
+# add target to generate various documentation:
+# generate TODO.md list from git grep
+# only supports single lines with @todo in them for now
+add_custom_target(doc ALL
+	COMMAND rm -f TODO.md
+	COMMAND echo "*** Generated from git grep as cmake target, do not edit manually, your changes will be whiped.***" > TODO.md
+	COMMAND echo "" >> TODO.md
+	COMMAND git grep -n '@todo' -- './*' ':!CMakeLists.txt' > TODO.md
+)

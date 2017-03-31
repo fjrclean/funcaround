@@ -242,7 +242,7 @@ int main(int argc, char* args[]) {
 	  }
 	  for ( int32_t j=0; j<numCmds; j++ ) {
 	    i->msgWalk+=sizeof(int32_t);
-	    switch ( j )
+	    //	    switch ( j )
 	  }
 	}
       }

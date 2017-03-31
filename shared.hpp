@@ -26,6 +26,7 @@ enum vector_t {
 };
 
 const int DGRAM_SIZE=1400; //bytes?
+const int MAX_PLAYER_CMDS=3;
 const int VERSION=1; // number to compare client/server versions.
 //any json root must be split if bigger
 const int PLAYER_NAME_SIZE=32;
