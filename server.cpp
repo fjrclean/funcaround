@@ -98,6 +98,7 @@ int main(int argc, char* args[]) {
 	/** RECEIVE NET MSG FROM PLAYER **/ {
 	  jsonFromPlayers.clear();
 	  for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
+	    i->msgWalk=NULL;
 	    if ( i->inUse==false ) {
 	      freePlayer_p = i;
 	      continue;
@@ -179,71 +180,64 @@ int main(int argc, char* args[]) {
 	}
       }
 
-      /** PLAYER JOINING **/ {
+      /** JOIN OR QUERY SERVER **/ {
+	// @todo get rid of json in join request & reply.
+	// @todo player join, send back to client ticksPerSec as well as port to join.
         sockaddr_in srcAddr;
         socklen_t srcAddrSz = sizeof(srcAddr);
-        static char dgram[DGRAM_SIZE];
-        memset(dgram,0,DGRAM_SIZE);
-        errno = 0;
-	int i=0;
-        if ( (i=recvfrom(listenSocket,(void *) &dgram,DGRAM_SIZE,recv_flags,(sockaddr*)&srcAddr,&srcAddrSz))<0 && errno!=0 ) {
-            // always error?
-            //std::cerr << "Error on listen socket: " << errno << std::endl;
-            //return -1;
-        }
-
-        Json::Value receive;
-        Json::Reader jsonReader;
-        Json::Value send;
-        Json::FastWriter jsonWriter;
-        send["acc"] = false;
-        send["rea"] = "full";
+	char *recvMsg = NULL;
+	size_t recvMsgSz = 0;
+        static char sendMsg[DGRAM_SIZE+1];
+        memset(sendMsg,0,DGRAM_SIZE+1);
+	// @todo is bool a fixed size, good for net msgs?
+	bool *accept = (bool*)&sendMsg;
+	*accept = false;
+	uint32_t *reason = (uint32_t*)&sendMsg+sizeof(bool);
+	*reason = REASON_FULL;
         if ( freePlayer_p!=NULL ) {
-            send["acc"] = true;
-	    send["prt"] = freePlayer_p->port;
+	  recvMsg = freePlayer_p->msg;
+	  recvMsgSz = DGRAM_SIZE;
+	  freePlayer_p->msgWalk = freePlayer_p->msg;
+	  *accept = true;
 	}
-	// we can set name and join preferences like team here
-        jsonReader.parse(dgram,dgram+(DGRAM_SIZE-1),receive,false);
-	if ( receive["ver"] != VERSION ) {
-	  send["acc"] = false;
-	  send["rea"] = "version";
+	errno = 0;
+	int i=0;
+        if ( (i=recvfrom(listenSocket,(void *) recvMsg,recvMsgSz,recv_flags,(sockaddr*)&srcAddr,&srcAddrSz))<0
+	  && errno!=0 && errno!=EAGAIN && errno!=EWOULDBLOCK ) { // with MSG_DONTWAIT errors are returned if would have to block
+	  shared::log(globVerb,1,"join error");
+	  return -1;
+        }
+	// @todo add version check to join request
+	// @todo ban system with filter in join code to work with it, better done at OS level with sockets?
+	
+	if ( i>0 && *accept==true ) {
+	  freePlayer_p->inUse = true;
+	  shared::log(globVerb,3,"Player %u on port %u reserved, awating connection.",freePlayer_p->id,freePlayer_p->port);
+	  freePlayer_p = NULL;
 	}
-	if ( !jsonReader.good() ) {
-	  send["acc"] = false;
-	  send["rea"] = "corrupt";
-	}
-	if ( i> 0 ) {
-	  std::string data = jsonWriter.write(send);
-	  if ( data.length()>DGRAM_SIZE ) {
-	    std::cerr << "Error, send > DGRAM_SIZE" << std::endl;
-	    return -1;
-	  }
-	  if ( sendto(listenSocket,data.c_str(),data.length(),0,(sockaddr *) &srcAddr,sizeof(srcAddr))<0 ) {
-	    std::cerr << "Error on send join reply" << std::endl;
-	    return -1;
-	  }
-	  std::cout << "sent reply " << send.get("acc","error").asString() << std::endl;
-	  if ( send.get("acc","error").asBool() == true ) {
-	    freePlayer_p->inUse = true;
-	    shared::log(globVerb,1,"Player %u joined on port %u",freePlayer_p->id,freePlayer_p->port);
-	    freePlayer_p = NULL;
-	  }
+	if ( i>0 ) {
+	  // @todo send join reply to client
 	}
 
-        }
+      }
 
       /** NON-IMMEDIATE ACTIONS **/ {
 	for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
 	  // loop through number of commands in message
-	  int32_t numCmds = (int32_t)*i->msgWalk;
-	  if ( numCmds>MAX_PLAYER_CMDS ) {
+	  
+	  int32_t numCmds = 0;
+	  if ( i->msgWalk!=NULL )
+	    numCmds=(int32_t)*i->msgWalk;
+	  if ( numCmds>MAX_PLAYER_CMDS || numCmds==0 ) {
 	    // handle excess commands; save them for next tick or discard and warn player
 	    numCmds=0;
+	    continue;
 	  }
+	  i->msgWalk+=sizeof(int32_t);
 	  for ( int32_t j=0; j<numCmds; j++ ) {
-	    i->msgWalk+=sizeof(int32_t);
-	    //	    switch ( j )
-	  }
+	    int32_t cmd = (int32_t)*i->msgWalk;
+	    //	    switch ( cmd )
+	    }
 	}
       }
 

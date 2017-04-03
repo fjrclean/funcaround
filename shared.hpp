@@ -25,6 +25,11 @@ enum vector_t {
   Z
 };
 
+enum reject_reason {
+  REASON_FULL
+};
+
+
 const int DGRAM_SIZE=1400; //bytes?
 const int MAX_PLAYER_CMDS=3;
 const int VERSION=1; // number to compare client/server versions.
