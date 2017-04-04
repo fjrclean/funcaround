@@ -29,6 +29,10 @@ enum reject_reason {
   REASON_FULL
 };
 
+enum server_query {
+  JOIN
+};
+
 
 const int DGRAM_SIZE=1400; //bytes?
 const int MAX_PLAYER_CMDS=3;

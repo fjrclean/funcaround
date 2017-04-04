@@ -22,7 +22,7 @@ uint64_t player_actions;
 static void glfwKey(GLFWwindow* window, int key, int scancode, int action, int mods);
 int main() {
   /**GAME OPTIONS**/
-  char *playerName;
+  char playerName[32] = "clean";
   
   /** NETWORK SETUP **/
   unsigned int serverPort = 5666;
@@ -32,28 +32,36 @@ int main() {
   rAddr.sin_family = AF_INET;
 
   /** QUERY SERVER **/ {
-  Json::Reader jsonReader;
-  Json::FastWriter jsonWriter;
-  Json::Value jsonSend;
-  jsonSend["ver"] = VERSION;
-  jsonSend["ord"] = 0;
-  std::string jsonSend_str = jsonWriter.write(jsonSend);
-  if ( inet_aton(serverIp,&rAddr.sin_addr)==0 ) {
+    char sendMsg[DGRAM_SIZE+1];
+    size_t sendMsgSz = DGRAM_SIZE;
+    if ( inet_aton(serverIp,&rAddr.sin_addr)==0 ) {
     std::cerr << "Error server IP" << std::endl;
     return -1;
   }
+    uint32_t *version = (uint32_t*)&sendMsg;
+    uint32_t *query = (uint32_t*)version+1; //type of query, eg if client wants to join or just information
+    //    char *sendMSgWalk = (char*)(query+1);
+    uint32_t *numOfCmds = (query+1);
+    *numOfCmds = 1;
+    int32_t *cmd = (int32_t*)numOfCmds+1;
+    *cmd = CMD_SET;
+    int32_t *var = cmd+1;
+    *var = VAR_PLAYER_NAME;
+    char *val1 = (char*)(var+1);
+    strncpy(val1,playerName,32);
+    
   rAddr.sin_port = htons(serverPort);
-  if ( sendto(sockfd,jsonSend_str.c_str(),jsonSend_str.length(),0,(sockaddr *) &rAddr,sizeof(rAddr))<0 ) {
+  if ( sendto(sockfd,&sendMsg,DGRAM_SIZE,0,(sockaddr *) &rAddr,sizeof(rAddr))<0 ) {
     std::cerr << "Error on send join request" << std::endl;
   }
   int flags = MSG_TRUNC; // | MSG_WAITALL;
   sockaddr_in srcAddr;
   socklen_t srcAddrSz = sizeof(srcAddr);
-  char dgram[DGRAM_SIZE];
-  memset(dgram,0,DGRAM_SIZE);
+  char recvMsg[DGRAM_SIZE+1];
+  memset(recvMsg,0,DGRAM_SIZE+1);
   int i=0;
   errno = 0;
-  if ( (i=recvfrom(sockfd,(void *) &dgram,DGRAM_SIZE,flags,(sockaddr*)&srcAddr,&srcAddrSz))<0 && errno!=0 ) {
+  if ( (i=recvfrom(sockfd,(void *) &recvMsg,DGRAM_SIZE,flags,(sockaddr*)&srcAddr,&srcAddrSz))<0 && errno!=0 ) {
     // always error?
     //std::cerr << "Error on listen socket: " << errno << std::endl;
     //return -1;
@@ -62,26 +70,23 @@ int main() {
     std::cerr << "Error: response received from unknown address" << std::endl;
     return -1;
   }
-  Json::Value jsonReceive;
-  jsonReader.parse(dgram,dgram+(DGRAM_SIZE-1),jsonReceive,false);
-  if ( !jsonReader.good() ) {
-    std::cerr << "server json reply corrupt" << std::endl;
+  bool *accept = (bool*)recvMsg;
+  int32_t *reason = (int32_t*)accept+1;
+  if ( accept==false ) {
+    // @todo state reason for rejection
+    return -1; // @todo change return's to exit() or better if using nested functions with gnu c.
   }
-  if ( jsonReceive["acc"]!=true ) {
-    std::cerr << "Could not join server, reason: " << jsonReceive.get("rea","error").asString() << std::endl;
-    return -1;
-  }
-  if ( !jsonReceive["prt"].isUInt() ) {
-    std::cerr << "Error: response received with nonsense port" << std::endl;
-    return -1;
-  }
-  rAddr.sin_port = htons(jsonReceive["prt"].asUInt());
+  uint32_t *ticksPerSec = (uint32_t*)reason+1;
+  uint32_t *serverPort = ticksPerSec+1;
+  printf("server tick %u on port %u\n",*ticksPerSec,*serverPort);
+  printf("accept\n");
+    
   }
 
   /** LOAD MAP **/
   
 
-
+  return 0;
   if ( !glfwInit() ) {
     std::cerr << "Error: glfw init\n";
     return -1;

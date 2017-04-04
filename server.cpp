@@ -47,7 +47,7 @@ int main(int argc, char* args[]) {
     };
     struct player_t {
       int fd;
-      unsigned int port;
+      uint32_t port;
       unsigned int id;
       bool receivedMsg;
       char msg[DGRAM_SIZE+1]; // +1 is because msg always needs to end in NUL for read protection
@@ -71,7 +71,6 @@ int main(int argc, char* args[]) {
     // I think MSG_DONTWAIT still ensures if it reads anything, it will read the whole dgram.
     // So no possibility of reading incomplete messages unless they are too large and split into multiple dgrams?
     const int recv_flags = MSG_DONTWAIT | MSG_TRUNC;// | MSG_WAITALL;
-    std::vector<Json::Value> jsonFromPlayers;
 
     /** GAME LOOP **/ {
     timeval tickStart;
@@ -96,7 +95,6 @@ int main(int argc, char* args[]) {
       /** WAIT LOOP **/
       do { // do wait loop at least once, and then additionally until next tick
 	/** RECEIVE NET MSG FROM PLAYER **/ {
-	  jsonFromPlayers.clear();
 	  for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
 	    i->msgWalk=NULL;
 	    if ( i->inUse==false ) {
@@ -115,20 +113,10 @@ int main(int argc, char* args[]) {
 	      shared::log(globVerb,LOG_ERROR,"Receive from player socket");
 	      return -1;
 	    }
-	    Json::Value receive;
-	    Json::Reader jsonReader;
-	    Json::Value send;
-	    Json::FastWriter jsonWriter;
-	    if ( j>0 && srcAddr.sin_port==i->unique.remote.sin_port && srcAddr.sin_addr.s_addr==i->unique.remote.sin_addr.s_addr ) {
-	      jsonReader.parse(i->msg,i->msg+(DGRAM_SIZE-1),receive,false);
-	    }
-	    if ( !jsonReader.good() || j<=0 ) { 
-	      // player data corrupted, add notice of this to game state sent to this player
+	    if ( !(j>0 && srcAddr.sin_port==i->unique.remote.sin_port && srcAddr.sin_addr.s_addr==i->unique.remote.sin_addr.s_addr) ) {
 	      continue;
 	    }
 	    i->receivedMsg = true;
-	    //	    receive["actor"] = playerSck->player.actorId;
-	    jsonFromPlayers.push_back(receive);
 	    i->unique.ticksSinceLast=0;
 	  }
 	}
@@ -180,6 +168,14 @@ int main(int argc, char* args[]) {
 	}
       }
 
+      /** DO PHYSICS/COLLISION **/ {
+
+      }
+
+      /** SEND UPDATES TO PLAYERS **/ {
+	// @todo send changed server variables back to player.
+      }
+
       /** JOIN OR QUERY SERVER **/ {
 	// @todo get rid of json in join request & reply.
 	// @todo player join, send back to client ticksPerSec as well as port to join.
@@ -192,12 +188,17 @@ int main(int argc, char* args[]) {
 	// @todo is bool a fixed size, good for net msgs?
 	bool *accept = (bool*)&sendMsg;
 	*accept = false;
-	uint32_t *reason = (uint32_t*)&sendMsg+sizeof(bool);
+	int32_t *reason = (int32_t*)accept+1;
 	*reason = REASON_FULL;
+	uint32_t *tick = (uint32_t*)reason+1;
+	*tick = ticksPerSec;
+	uint32_t *port = tick+1;
+	*port = freePlayer_p->port;
         if ( freePlayer_p!=NULL ) {
 	  recvMsg = freePlayer_p->msg;
 	  recvMsgSz = DGRAM_SIZE;
-	  freePlayer_p->msgWalk = freePlayer_p->msg;
+	  freePlayer_p->msgWalk = freePlayer_p->msg+(sizeof(uint32_t)*2);
+	  freePlayer_p->receivedMsg = true;
 	  *accept = true;
 	}
 	errno = 0;
@@ -216,7 +217,10 @@ int main(int argc, char* args[]) {
 	  freePlayer_p = NULL;
 	}
 	if ( i>0 ) {
-	  // @todo send join reply to client
+	  // @todo reduce size of sendMsg buf as join/query will be fixed.
+	  if ( sendto(listenSocket,&sendMsg,DGRAM_SIZE,0,(sockaddr *) &srcAddr,sizeof(srcAddr))<0 )
+	    std::cerr << "Error on send join request" << std::endl;
+	  
 	}
 
       }
@@ -225,30 +229,40 @@ int main(int argc, char* args[]) {
 	for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
 	  // loop through number of commands in message
 	  
-	  int32_t numCmds = 0;
+	  uint32_t numCmds = 0;
 	  if ( i->msgWalk!=NULL )
-	    numCmds=(int32_t)*i->msgWalk;
-	  if ( numCmds>MAX_PLAYER_CMDS || numCmds==0 ) {
-	    // handle excess commands; save them for next tick or discard and warn player
-	    numCmds=0;
+	    numCmds=(uint32_t)*i->msgWalk;
+	  if ( numCmds==0 )
 	    continue;
+	  if ( numCmds>MAX_PLAYER_CMDS ) {
+	    // handle excess commands; save them for next tick or discard and warn player
 	  }
-	  i->msgWalk+=sizeof(int32_t);
+	  i->msgWalk+=sizeof(uint32_t);
 	  for ( int32_t j=0; j<numCmds; j++ ) {
 	    int32_t cmd = (int32_t)*i->msgWalk;
-	    //	    switch ( cmd )
+	    i->msgWalk+=sizeof(int32_t);
+	    int32_t *var = NULL;
+	    switch ( cmd ) {
+	    case CMD_SET:
+	      var = (int32_t*)i->msgWalk;
+	      i->msgWalk+=sizeof(int32_t);
+	      switch ( *var ) {
+	      case VAR_PLAYER_NAME:
+		*(i->msgWalk+(PLAYER_NAME_SIZE-1))='\0';
+		strncpy(i->unique.playerName,i->msgWalk,PLAYER_NAME_SIZE);
+		shared::log(globVerb,3,"player %u's name set to %s.\n",i->id,i->unique.playerName);
+		i->msgWalk+=PLAYER_NAME_SIZE;
+	      }
+	      break;
+	    default:
+	      // cmd not recognised.
+	      break;
+	    }
 	    }
 	}
       }
 
 
-      /** DO PHYSICS/COLLISION **/ {
-
-      }
-
-      /** SEND UPDATES TO PLAYERS **/ {
-
-      }
     }
     }
 
