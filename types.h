@@ -11,7 +11,7 @@ enum direction_t {
     DOWN=10
 };
 
-enum actions_t { // up to 64 different actions
+/*enum actions_t { // up to 64 different actions
     JUMP,
     SHOOT,
     RELOAD,
@@ -28,7 +28,7 @@ enum actions_t { // up to 64 different actions
     MV_START_DOWN,
     MV_STOP_DOWN,
     USE
-};
+    };*/
 
 
 

@@ -1,14 +1,21 @@
-enum actor_types {
+typedef enum actor_types {
   HUMAN,
   ALIEN,
   WEAPON_ALIEN_RIFLE
-};
+}actor_types;
 
 /*char *varBufFormatStrings[] = {
 
   }*/
 
-struct actor_t {
+const int MAX_ACTIONS = 32;
+
+enum actions_t {
+  // up by twos
+  ACT_JUMP=1
+};
+
+typedef struct actor_t {
   char *varBuf;
   char *varBufFormatString;
   void *runFunction;
@@ -19,11 +26,11 @@ struct actor_t {
   uint64_t actions_pass;
   actor_types actor_type;
   unsigned int actionPass[];
-  struct world {
+  /*  struct world {
     float x,y,z;
     float lookVec[3];
-  };
-};
+    };*/
+}actor_t;
 
 //each actor type file should include actors.hpp
 //void example_actor_main(uint64_t *actions,uint64_t *attributes,

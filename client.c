@@ -1,21 +1,16 @@
-#include <json/json.h>
-#include <json/reader.h>
-#include <json/writer.h>
-#include <vector>
-#include <string>
-#include <cstdlib>
-#include <iostream>
-#include <sstream>
-#include <cstring>
-
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <errno.h>
 #include <sys/time.h>
 
 #define GLFW_INCLUDE_GLU
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "shared.hpp"
-#include "types.hpp"
+#include "shared.h"
+#include "types.h"
+#include "actors.h"
 
 uint64_t player_actions;
 
@@ -23,21 +18,25 @@ static void glfwKey(GLFWwindow* window, int key, int scancode, int action, int m
 int main() {
   /**GAME OPTIONS**/
   char playerName[32] = "clean";
+  int actionGlfwKeyIndex[MAX_ACTIONS];
+
+  FILE *consoleFd = startConsole("sv_config","sv_console");
   
   /** NETWORK SETUP **/
   unsigned int serverPort = 5666;
   char serverIp[] = "127.0.0.1";
-  int sockfd = shared::createSocket(0);
+  int sockfd = createSocket(0);
   sockaddr_in rAddr;
   rAddr.sin_family = AF_INET;
+  
 
   /** QUERY SERVER **/ {
     char sendMsg[DGRAM_SIZE+1];
     size_t sendMsgSz = DGRAM_SIZE;
     if ( inet_aton(serverIp,&rAddr.sin_addr)==0 ) {
-    std::cerr << "Error server IP" << std::endl;
-    return -1;
-  }
+      makeLog(1,"Invalid server ip.");
+      return -1;
+    }
     uint32_t *version = (uint32_t*)&sendMsg;
     uint32_t *query = (uint32_t*)version+1; //type of query, eg if client wants to join or just information
     //    char *sendMSgWalk = (char*)(query+1);
@@ -52,7 +51,7 @@ int main() {
     
   rAddr.sin_port = htons(serverPort);
   if ( sendto(sockfd,&sendMsg,DGRAM_SIZE,0,(sockaddr *) &rAddr,sizeof(rAddr))<0 ) {
-    std::cerr << "Error on send join request" << std::endl;
+    makeLog(1,"Error on send join request");
   }
   int flags = MSG_TRUNC; // | MSG_WAITALL;
   sockaddr_in srcAddr;
@@ -67,7 +66,7 @@ int main() {
     //return -1;
   }
   if ( rAddr.sin_addr.s_addr!=srcAddr.sin_addr.s_addr ) {
-    std::cerr << "Error: response received from unknown address" << std::endl;
+    makeLog(LOG_NORMAL,"Response received from unknown address");
     return -1;
   }
   bool *accept = (bool*)recvMsg;
@@ -79,28 +78,25 @@ int main() {
   uint32_t *ticksPerSec = (uint32_t*)reason+1;
   uint32_t *serverPort = ticksPerSec+1;
   printf("server tick %u on port %u\n",*ticksPerSec,*serverPort);
-  printf("accept\n");
     
   }
 
   /** LOAD MAP **/
   
-
-  return 0;
   if ( !glfwInit() ) {
-    std::cerr << "Error: glfw init\n";
+    makeLog(LOG_ERROR,"glfw init");
     return -1;
   }
   //  glfwSetErrorCallback(glfwError);
   GLFWwindow *window = glfwCreateWindow(640,480,"funcaround",NULL,NULL);
   if ( !window ) {
     glfwTerminate();
-    std::cerr << "Error: glfw window\n";
+    makeLog(LOG_ERROR,"glfw window");
     return -1;
   }
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
-  glfwSetKeyCallback(window,glfwKey);
+  //glfwSetKeyCallback(window,glfwKey);
   glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
   double mouseX,mouseY;
   glfwGetCursorPos(window,&mouseX,&mouseY);
@@ -109,32 +105,31 @@ int main() {
   float ratio;
   int width,height;
   timeval tickStart;
-  double ticksPerSec=1;
-  Json::Reader jsonReader;
-  Json::FastWriter jsonWriter;
-  Json::Value jsonSend;
-  //jsonSend["cnm"] = CMD_PLAYER_NAME; // command to execute on server
-  //jsonSend["cvl"] = "clean"; // value of command, can be array if cmd takes multiple arguments
-  std::string jsonSend_str;
+  uint32_t ticksPerSec=1;
+  char *cmd = (char*)malloc(256);
+  size_t cmdSz = 256;
   gettimeofday(&tickStart,NULL);
   while( !glfwWindowShouldClose(window) ) {
-    while (!shared::tickStart(ticksPerSec,&tickStart)) { // pause game loop until time for next tick.
+    /** WAIT LOOP **/
+    do { // pause game loop until time for next tick.
+      // @todo another loop for rendering with different rate.
       glfwGetFramebufferSize(window,&width,&height);
       ratio=width/(float)height;
       glViewport(0,0,width,height);
       glClear(GL_COLOR_BUFFER_BIT);
       glfwSwapBuffers(window);
-      glfwPollEvents(); 
-    }
+      glfwPollEvents();
+
+      /** INTERPRET CONSOLE COMMANDS **/
+      //getline()
+      int i;
+      if ( (i=getline(&cmd,&cmdSz,consoleFd))>=0 )
+	 fwrite(cmd,i,1,stdout);
+      
+    } while (startTick(ticksPerSec,&tickStart));
 
     /** SEND ACTIONS TO SERVER **/
 
-    jsonSend["hgs"] = 0; // tell service highest game state id received
-    jsonSend_str = jsonWriter.write(jsonSend);
-    std::cout << "connect " << jsonSend << std::endl;
-    if ( sendto(sockfd,jsonSend_str.c_str(),jsonSend_str.length(),0,(sockaddr *) &rAddr,sizeof(rAddr))<0 ) {
-      std::cerr << "Error on jsonSend connect" << std::endl;
-    }
   }
   glfwDestroyWindow(window);
   glfwTerminate();
@@ -142,8 +137,14 @@ int main() {
   return 0;
 }
 
-static void glfwKey(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
+// for callback input method
+/*static void glfwKeysToActions(GLFWwindow* window, int key, int scancode, int action, int mods) {
+  if ( glfwKeyActionIndex[key]==0 && glfwKeyCmdIndex[key]==0 )
+    return;
+  
+  if ( glfwKeyCmdIndex[key]!=0 )
+    glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }*/
+
+// for glfwGetKey() polling method
+//uint32_T keysToActions(uint32_t actions,

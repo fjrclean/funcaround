@@ -7,14 +7,21 @@
 #include <netinet/udp.h>
 #include <arpa/inet.h>
 
+#include <stdbool.h>
 #include <stdarg.h>
 
-//#define LOG_ERROR -1
-#define LOG_NET 4
-enum log_t {
+typedef struct sockaddr sockaddr;
+typedef struct sockaddr_in sockaddr_in;
+typedef struct timeval timeval;
+//typdef struct
+
+
+//#define MAKELOG_ERROR -1
+#define MAKELOG_NET 4
+enum makeLog_t {
   LOG_ERROR = -1,
   // nothing is output at 0
-  LOG_NORM = 1,
+  LOG_NORMAL = 1,
   LOG_DETAILS = 2,
   LOG_NETMSG = 3
 };
@@ -33,8 +40,7 @@ enum server_query {
   JOIN
 };
 
-
-const int DGRAM_SIZE=1400; //bytes?
+#define DGRAM_SIZE 1400 //bytes?
 const int MAX_PLAYER_CMDS=3;
 const int VERSION=1; // number to compare client/server versions.
 //any json root must be split if bigger
@@ -45,8 +51,9 @@ const int MAX_JOIN_CMDS=3;
 // on client, commands will be prefixed with cl_ or sv_ ,
 // with sv_ being removed and rest sent to server.
 // server will never see these prefixes.
-enum commands_server {
-  CMD_SET // set a variable
+enum commands_t { 
+  CMD_SET=1,// set a variable
+  CMD_EXIT=2
 };
 
 enum variables_server { //
@@ -64,8 +71,8 @@ const char varServerHelp[] = {
   "player_name <name>"
 };
 
-namespace shared {
-
+  void makeLog(int messgVerb,const char*message, ...)  __attribute__ ((format (printf,2,3)));
+  
   //correspond to client_commands
   //string constants include null terminator?
   const char* cmd_format_strings[] = {
@@ -77,7 +84,7 @@ namespace shared {
     if ( sockfd<0 ) {
       return -1;
     }
-    sockaddr_in lAddr;
+    struct sockaddr_in lAddr;
     lAddr.sin_family = AF_INET;
     lAddr.sin_addr.s_addr = INADDR_ANY;
     lAddr.sin_port = htons(localPort);
@@ -88,21 +95,55 @@ namespace shared {
     return sockfd;
   }
 
-  //  void log(int,int,const char*,...) __attribute__ ((pure));
-  void log(int globalVerb,int messgVerb,const char*message, ...) {
-    if ( messgVerb<=globalVerb ) {
-      printf("%d: ",messgVerb);
+  FILE* startConsole(char const *configFn,char const *consoleFn) __attribute__ ((const));
+  FILE* startConsole(char const *configFn,char const *consoleFn) {
+    // @todo make multiple paths to be searched for files
+    // @todo file error checking
+    // @todo console file stuff to shared.hpp
+    FILE *consoleFd = fopen(consoleFn,"w+");
+    FILE *configTxt = fopen("config.txt","r");
+    if ( consoleFd==NULL ) {
+      makeLog(1,"failed makeLog");
+    }
+    if ( configTxt!=NULL ) {
+      int c;
+      do {
+	c = fgetc(configTxt);
+	if ( c!=EOF )
+	  fputc(c,consoleFd);
+      } while ( c!=EOF);
+    }
+    fseek(consoleFd,0,SEEK_SET);
+    fclose(configTxt);
+    return consoleFd;
+  }
+
+  
+  
+  // @todo change makeLog usages to new definition using external makeLogVerbosity variable.
+  int logVerbosity = 0;
+  void makeLog(int messgVerb,const char*message, ...) {
+    logVerbosity=3;
+    if ( messgVerb<=logVerbosity ) {
+      switch ( messgVerb ) {
+      case LOG_ERROR:
+	printf("ERROR: ");
+	break;
+      default:
+	printf("%d: ",messgVerb);
+	break;
+      }
       va_list valist;
       va_start(valist,message);
       vprintf(message,valist);
       va_end(valist);
       printf("\n");
     }
-    //    if ( messgVerb==LOG_NETMSG && )
-      // print to net messg log file
+    //    if ( messgVerb==MAKELOG_NETMSG && )
+      // print to net messg Log file
   }
 
-  bool tickStart(double ticksPerSec,timeval *tickStart) { // use glfw time source?
+  bool startTick(uint32_t ticksPerSec,timeval *tickStart) { // use glfw time source?
     double tickDuration = (1/(double)ticksPerSec) * 1000000;
     timeval now, diff;
     gettimeofday(&now,NULL);
@@ -113,5 +154,5 @@ namespace shared {
     }
     return false;
   }
-}
+
 #endif // SHARED_HPP

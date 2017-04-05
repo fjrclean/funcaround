@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 project(cppgame)
 
-set(SHARED_SRC ) 
+set(SHARED_SRC )
+set(CMAKE_C_FLAGS "-Wformat -m64")
 
-add_executable(sv_${PROJECT_NAME} ${SHARED_SRC} "server.cpp")
-add_executable(cl_${PROJECT_NAME} ${SHARED_SRC} "client.cpp")
+add_executable(sv_${PROJECT_NAME} ${SHARED_SRC} "server.c")
+add_executable(cl_${PROJECT_NAME} ${SHARED_SRC} "client.c")
 
 #add_executable(test_actors_${PROJECT_NAME} ${SHARED_SRC} "test_actors.cpp")
 

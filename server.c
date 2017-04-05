@@ -1,22 +1,14 @@
-#include <json/json.h>
-#include <json/reader.h>
-#include <vector>
-#include <map>
-#include <string>
-#include <cstdlib>
-#include <iostream>
-#include <cstring>
-#include <sstream>
-#include <cerrno>
-#include <cstring>
-#include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
 #include <assert.h>
 
 #include <sys/time.h>
 
-#include "types.hpp"
-#include "shared.hpp"
-#include "actors.hpp"
+#include "types.h"
+#include "shared.h"
+#include "actors.h"
 
 #define WAIT_PLAYER_MIA 5 // time to wait, in seconds, before dropping player who has sent no legible data
 
@@ -24,28 +16,27 @@ int main(int argc, char* args[]) {
     /** GAME OPTIONS **/
     unsigned int listenPort = 5666;
     unsigned int maxPlayers = 3;
-    std::string mapName;
-    for ( int i=0; i<argc; i++ ) {
+        for ( int i=0; i<argc; i++ ) {
         if ( args[i]=="--port" ) {
             i+=1;
-            listenPort = std::atoi(args[i]);
+            listenPort = atoi(args[i]);
         } else if ( args[i]=="--map" ) {
             i+=1;
-            mapName = std::string(args[i]);
+	    //        mapName = std::string(args[i]);
         }
     }
-    int globVerb=3;
+    int logVerbosity=3;
     double ticksPerSec=1;
     
     /** NETWORK SETUP **/
-    const int listenSocket = shared::createSocket(listenPort);
-    struct player_unique {
+    const int listenSocket = createSocket(listenPort);
+    typedef struct player_unique {
       sockaddr_in remote;
       unsigned int actorId;
       unsigned int ticksSinceLast; // since last received, as game ticks
       char playerName[PLAYER_NAME_SIZE];
-    };
-    struct player_t {
+    }player_unique;
+    typedef struct player_t {
       int fd;
       uint32_t port;
       unsigned int id;
@@ -55,17 +46,17 @@ int main(int argc, char* args[]) {
       char *msgWalk;
       bool inUse;
       player_unique unique; // this should be cleared each time connection becomes free
-    };
+    }player_t;
     player_t playerSckts[maxPlayers];
     for ( int i=0; i<maxPlayers; i++ ) {
       // does compiler combine all playerSckts[i] into one and then just use address from that?
       // so it doesn't have to do arithmetic to convert index to pointer more than once.
       playerSckts[i].port = listenPort+1+i; 
-      playerSckts[i].fd =  shared::createSocket(playerSckts[i].port);
+      playerSckts[i].fd =  createSocket(playerSckts[i].port);
       playerSckts[i].inUse = false;
       playerSckts[i].id = i;
       memset((void*)&playerSckts[i].unique,0,sizeof(player_unique));
-      shared::log(globVerb,3,"player socket created: fd:%d port:%u",playerSckts[i].fd,playerSckts[i].port);
+      makeLog(3,"player socket created: fd:%d port:%u",playerSckts[i].fd,playerSckts[i].port);
     }
     player_t *freePlayer_p = NULL;
     // I think MSG_DONTWAIT still ensures if it reads anything, it will read the whole dgram.
@@ -87,7 +78,7 @@ int main(int argc, char* args[]) {
 	  i->inUse = false;
 	  // remove their actor from game too (with necessary cleanup)
 	  // perhaps send message to client, saying they have been dropped, reasons
-	  shared::log(globVerb,1,"Player %u left. Reason: lost sync too long.",i->id);
+	  makeLog(1,"Player %u left. Reason: lost sync too long.",i->id);
 	  memset((void*)&i->unique,0,sizeof(player_unique));
 	  continue;	  
 	}
@@ -110,7 +101,7 @@ int main(int argc, char* args[]) {
 	    int j;
 	    if ( (j=recvfrom(i->fd,(void*)i->msg,DGRAM_SIZE,recv_flags,(sockaddr*)&srcAddr,&srcAddrSz))<0
 		 && errno!=0 && errno!=EAGAIN && errno!=EWOULDBLOCK ) { // with MSG_DONTWAIT errors are returned if would have to block
-	      shared::log(globVerb,LOG_ERROR,"Receive from player socket");
+	      makeLog(LOG_ERROR,"Receive from player socket");
 	      return -1;
 	    }
 	    if ( !(j>0 && srcAddr.sin_port==i->unique.remote.sin_port && srcAddr.sin_addr.s_addr==i->unique.remote.sin_addr.s_addr) ) {
@@ -121,7 +112,7 @@ int main(int argc, char* args[]) {
 	  }
 	}
 
-      } while ( !shared::tickStart(ticksPerSec,&tickStart) );
+      } while ( !startTick(ticksPerSec,&tickStart) );
 
       /** END WAIT LOOP **/
 		
@@ -130,12 +121,12 @@ int main(int argc, char* args[]) {
 	// non immediate actions (like console commands) can be parsed after send to player, so as to not increase latency.
 	for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
 	  if ( i->receivedMsg==false && i->inUse ) {
-	    shared::log(globVerb,3,"player %u missed sync; %u in row.",i->id,i->unique.ticksSinceLast);
+	    makeLog(3,"player %u missed sync; %u in row.",i->id,i->unique.ticksSinceLast);
 	    continue;
 	  }
 	  if ( !i->inUse )
 	    continue;
-	  shared::log(globVerb,3,"player %u hit sync",i->id);
+	  makeLog(3,"player %u hit sync",i->id);
 	  i->msgWalk = i->msg;
 	  uint32_t runActions = (uint32_t)*i->msgWalk;
 	  i->msgWalk+=sizeof(uint32_t);
@@ -205,7 +196,7 @@ int main(int argc, char* args[]) {
 	int i=0;
         if ( (i=recvfrom(listenSocket,(void *) recvMsg,recvMsgSz,recv_flags,(sockaddr*)&srcAddr,&srcAddrSz))<0
 	  && errno!=0 && errno!=EAGAIN && errno!=EWOULDBLOCK ) { // with MSG_DONTWAIT errors are returned if would have to block
-	  shared::log(globVerb,1,"join error");
+	  makeLog(1,"join error");
 	  return -1;
         }
 	// @todo add version check to join request
@@ -213,13 +204,13 @@ int main(int argc, char* args[]) {
 	
 	if ( i>0 && *accept==true ) {
 	  freePlayer_p->inUse = true;
-	  shared::log(globVerb,3,"Player %u on port %u reserved, awating connection.",freePlayer_p->id,freePlayer_p->port);
+	  makeLog(3,"Player %u on port %u reserved, awating connection.",freePlayer_p->id,freePlayer_p->port);
 	  freePlayer_p = NULL;
 	}
 	if ( i>0 ) {
 	  // @todo reduce size of sendMsg buf as join/query will be fixed.
 	  if ( sendto(listenSocket,&sendMsg,DGRAM_SIZE,0,(sockaddr *) &srcAddr,sizeof(srcAddr))<0 )
-	    std::cerr << "Error on send join request" << std::endl;
+	    makeLog(LOG_ERROR,"send join request");
 	  
 	}
 
@@ -250,7 +241,7 @@ int main(int argc, char* args[]) {
 	      case VAR_PLAYER_NAME:
 		*(i->msgWalk+(PLAYER_NAME_SIZE-1))='\0';
 		strncpy(i->unique.playerName,i->msgWalk,PLAYER_NAME_SIZE);
-		shared::log(globVerb,3,"player %u's name set to %s.\n",i->id,i->unique.playerName);
+		makeLog(3,"player %u's name set to %s.\n",i->id,i->unique.playerName);
 		i->msgWalk+=PLAYER_NAME_SIZE;
 	      }
 	      break;
