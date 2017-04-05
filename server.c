@@ -25,7 +25,7 @@ int main(int argc, char* args[]) {
 	    //        mapName = std::string(args[i]);
         }
     }
-    int logVerbosity=3;
+    logVerbosity=3;
     double ticksPerSec=1;
     
     /** NETWORK SETUP **/

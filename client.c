@@ -20,8 +20,8 @@ int main() {
   char playerName[32] = "clean";
   int actionGlfwKeyIndex[MAX_ACTIONS];
 
-  FILE *consoleFd = startConsole("sv_config","sv_console");
-  
+  FILE *consoleFd = startConsole("cl_config.txt","cl_console.txt");
+
   /** NETWORK SETUP **/
   unsigned int serverPort = 5666;
   char serverIp[] = "127.0.0.1";
@@ -124,7 +124,7 @@ int main() {
       //getline()
       int i;
       if ( (i=getline(&cmd,&cmdSz,consoleFd))>=0 )
-	 fwrite(cmd,i,1,stdout);
+	fwrite(cmd,i,1,stdout);
       
     } while (startTick(ticksPerSec,&tickStart));
 

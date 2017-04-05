@@ -55,4 +55,8 @@ add_custom_target(doc ALL
 	COMMAND echo "*** Generated from git grep as cmake target, do not edit manually, your changes will be whiped.***" > TODO.md
 	COMMAND echo "" >> TODO.md
 	COMMAND git grep -n '@todo' -- './*' ':!CMakeLists.txt' > TODO.md
+	COMMAND rm -f NOTES.md
+	COMMAND echo "*** Generated from git grep as cmake target, do not edit manually, your changes will be whiped.***" > NOTES.md
+	COMMAND echo "" >> NOTES.md
+	COMMAND git grep -n '@note' -- './*' ':!CMakeLists.txt' > NOTES.md
 )

@@ -71,13 +71,34 @@ const char varServerHelp[] = {
   "player_name <name>"
 };
 
-  void makeLog(int messgVerb,const char*message, ...)  __attribute__ ((format (printf,2,3)));
   
   //correspond to client_commands
   //string constants include null terminator?
   const char* cmd_format_strings[] = {
     "%s"
   };
+  int logVerbosity = 0;
+// @note function attributes const,pure seem not stop variadic functions from working?
+void makeLog(int messgVerb,const char*message, ...)  __attribute__ ((format (printf,2,3)));
+void makeLog(int messgVerb,const char*message, ...) {
+  if ( messgVerb<=logVerbosity ) {
+      switch ( messgVerb ) {
+      case LOG_ERROR:
+	printf("ERROR: ");
+	break;
+      default:
+	printf("%d: ",messgVerb);
+	break;
+      }
+      va_list valist;
+      va_start(valist,message);
+      vprintf(message,valist);
+      va_end(valist);
+      printf("\n");
+    }
+    //    if ( messgVerb==MAKELOG_NETMSG && )
+    // print to net messg Log file
+  }
 
   int createSocket(const unsigned int localPort) {
     int sockfd = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
@@ -95,53 +116,30 @@ const char varServerHelp[] = {
     return sockfd;
   }
 
-  FILE* startConsole(char const *configFn,char const *consoleFn) __attribute__ ((const));
-  FILE* startConsole(char const *configFn,char const *consoleFn) {
+// @note with const func attribute, startConsole can read&set both global vars and objects pointed to by parameters, even though gcc manual states "Note that a function that has pointer arguments and examines the data pointed to must not be declared const."
+FILE* startConsole(const char *configFn,char const *consoleFn);// __attribute__ ((const));
+FILE* startConsole(const char *configFn,char const *consoleFn) {
     // @todo make multiple paths to be searched for files
     // @todo file error checking
     // @todo console file stuff to shared.hpp
-    FILE *consoleFd = fopen(consoleFn,"w+");
-    FILE *configTxt = fopen("config.txt","r");
-    if ( consoleFd==NULL ) {
-      makeLog(1,"failed makeLog");
-    }
-    if ( configTxt!=NULL ) {
-      int c;
-      do {
-	c = fgetc(configTxt);
-	if ( c!=EOF )
-	  fputc(c,consoleFd);
-      } while ( c!=EOF);
-    }
-    fseek(consoleFd,0,SEEK_SET);
+  FILE *consoleFd = fopen(consoleFn,"w+");
+  FILE *configTxt = fopen(configFn,"r");
+  if ( consoleFd==NULL ) {
+    makeLog(1,"failed makeLog");
+  }
+  if ( configTxt!=NULL ) {
+    makeLog(LOG_NORMAL,"%s found",configFn);
+    int c;
+    do {
+      c = fgetc(configTxt);
+      if ( c!=EOF )
+	fputc(c,consoleFd);
+    } while ( c!=EOF);
     fclose(configTxt);
-    return consoleFd;
   }
-
-  
-  
-  // @todo change makeLog usages to new definition using external makeLogVerbosity variable.
-  int logVerbosity = 0;
-  void makeLog(int messgVerb,const char*message, ...) {
-    logVerbosity=3;
-    if ( messgVerb<=logVerbosity ) {
-      switch ( messgVerb ) {
-      case LOG_ERROR:
-	printf("ERROR: ");
-	break;
-      default:
-	printf("%d: ",messgVerb);
-	break;
-      }
-      va_list valist;
-      va_start(valist,message);
-      vprintf(message,valist);
-      va_end(valist);
-      printf("\n");
-    }
-    //    if ( messgVerb==MAKELOG_NETMSG && )
-      // print to net messg Log file
-  }
+  fseek(consoleFd,0,SEEK_SET);
+  return consoleFd;
+}
 
   bool startTick(uint32_t ticksPerSec,timeval *tickStart) { // use glfw time source?
     double tickDuration = (1/(double)ticksPerSec) * 1000000;
