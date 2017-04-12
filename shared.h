@@ -23,7 +23,9 @@ enum makeLog_t {
   // nothing is output at 0
   LOG_NORMAL = 1,
   LOG_DETAILS = 2,
-  LOG_NETMSG = 3
+  LOG_NETMSG = 3,
+  LOG_CHAT = 4
+
 };
 
 enum vector_t {
@@ -47,29 +49,6 @@ const int VERSION=1; // number to compare client/server versions.
 const int PLAYER_NAME_SIZE=32;
 const int MAX_JOIN_CMDS=3;
 
-
-// on client, commands will be prefixed with cl_ or sv_ ,
-// with sv_ being removed and rest sent to server.
-// server will never see these prefixes.
-enum commands_t { 
-  CMD_SET=1,// set a variable
-  CMD_EXIT=2
-};
-
-enum variables_server { //
-  VAR_PLAYER_NAME,
-  VAR_PLACEHOLDER1,
-  VAR_PLACEHOLDER2,
-};
-
-// loop through formats with console input using sscanf. If 1 returned, you know it's valid command, and which one, but wrong arguments.
-const char varServerFormats[] = {
-  "player_name %s"
-};
-
-const char varServerHelp[] = {
-  "player_name <name>"
-};
 
   
   //correspond to client_commands
@@ -125,10 +104,11 @@ FILE* startConsole(const char *configFn,char const *consoleFn) {
   FILE *consoleFd = fopen(consoleFn,"w+");
   FILE *configTxt = fopen(configFn,"r");
   if ( consoleFd==NULL ) {
-    makeLog(1,"failed makeLog");
+    makeLog(1,"failed startConsole");
+    //    exit();
   }
   if ( configTxt!=NULL ) {
-    makeLog(LOG_NORMAL,"%s found",configFn);
+    makeLog(LOG_NORMAL,"Reading from %s:",configFn);
     int c;
     do {
       c = fgetc(configTxt);
@@ -139,6 +119,116 @@ FILE* startConsole(const char *configFn,char const *consoleFn) {
   }
   fseek(consoleFd,0,SEEK_SET);
   return consoleFd;
+}
+
+
+// client should be able to parse some server variables when they are sent from server,
+// eg ticksPerSec. Other details sent to client should either be arbitrary data in inital
+// join reply, eg client's player number/ID, or if dynamic in game 'snapshot', eg player
+// names which are attached to a player number.
+// Therefore server variables are not stored locally on the client, as many are really
+// commands that would have to be determined at time of execution.
+// So a var request get/set is sent to server, and a reply returned.
+// Shared code should be that which determines if cmd line is for server or client,
+// and converts cmd string into game readable buffer.
+// This buffer is then sent over network to server, or if on server added to local buffer.
+
+// In client code check if comment, or local cmd, or set/show cmd using cl_ variable;
+// if so do relevent client only thing.
+// Else parse through shared function to convert line into netmsg and place in buf.
+// Client needs to track each collection of cmds it sends to server, so it knows when
+// they have been received. In the case of a show sv_ command, the server can just send
+// variable value back as chat message to player for now.
+// Later on it would be good for client to keep a table of sv_ variables that are kept up
+// to date.??
+
+enum variables_client {
+  CL_EXIT
+};
+
+enum variables_server { // both clients and server must be aware of server variables
+  SV_PLAYER_NAME,
+  SV_ticksPerSec,
+  NUM_SV_VARS
+};
+
+// loop through formats with console input using sscanf. If 1 returned, you know it's valid command, and which one, but wrong arguments.
+#define MAX_VAR_NAME_SIZE 32
+const char varServerNames[NUM_SV_VARS][MAX_VAR_NAME_SIZE] = {
+  "sv_playerName",
+  "sv_ticksPerSec"
+};
+const char varServerValues[NUM_SV_VARS][MAX_VAR_NAME_SIZE] = {
+  "%s",
+  "%u"
+};
+const char varServerHelp[] = {
+  "player_name <name>"
+};
+
+#define CMD_VALUE_MAX_SIZE 32
+
+typedef struct cmdMsg_t {
+  uint32_t asPlayerId;
+  bool set; // false for show variable;
+  uint32_t varId;
+  char bufValue[CMD_VALUE_MAX_SIZE];
+} cmdMsg_t;
+
+// add a player:<playerId> server cmd that will interpret the next cmd as if sent
+// by that player, adding the netmsg onto that...???
+
+enum getValidCmd_ {
+  getValidCmd_CLIENT,getValidCmd_SERVER,getValidCmd_INVALID };
+int getValidCmd(char *line, cmdMsg_t *msg, bool asServer, uint32_t playerId);
+int getValidCmd(char *line, cmdMsg_t *msg, bool asServer, uint32_t playerId) {
+  // @todo add aliases, so you can for example exit the game with just "/exit" rather than "/set exit 1"
+  memset((void*)msg,0,sizeof(cmdMsg_t));
+
+  msg->asPlayerId=playerId;
+  unsigned int len = 0;
+  // %n count argument success is not included in scanf return;
+  if ( sscanf(line," player:%n%u%n",&len,&msg->asPlayerId,&len)==0 && len>0 ) {
+    makeLog(LOG_NORMAL,"player:<player_id> must include player id as a positive number.");
+    return getValidCmd_INVALID;
+  }
+  line+=len;
+
+  len = 0;
+  msg->set=false;
+  sscanf(line," set %n",&len);
+  line+=len;
+  if ( len>0 )
+    msg->set = true;
+  len=0;
+
+  int type = getValidCmd_INVALID;
+  printf(":%s:",line);
+  int j=0;
+  for ( int i=0; i<NUM_SV_VARS; i++ ) {
+    printf("name:%s:\n",varServerNames[i]);
+    if ( (j=strcmp(line,varServerNames[i]))==0 ) {
+      msg->varId=i;
+      printf("yes\n");
+      type=getValidCmd_SERVER;
+    }
+  }
+  printf("%i\n",j);
+  
+  // @todo add warning if player:<player_id> was used on client variable.
+ unknown_keyword:
+  
+  if ( type==getValidCmd_SERVER )
+    printf("server\n");
+  return type;
+}
+
+
+int consoleGetNextLine(char *valBuf) {
+  int i;
+  //  if ( (i=getline(&cmd,&cmdSz,consoleFd))>=0 )
+  //    fwrite(cmd,i,1,stdout);
+
 }
 
   bool startTick(uint32_t ticksPerSec,timeval *tickStart) { // use glfw time source?

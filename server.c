@@ -185,6 +185,7 @@ int main(int argc, char* args[]) {
 	*tick = ticksPerSec;
 	uint32_t *port = tick+1;
 	*port = freePlayer_p->port;
+	// @todo send player their player id/num.
         if ( freePlayer_p!=NULL ) {
 	  recvMsg = freePlayer_p->msg;
 	  recvMsgSz = DGRAM_SIZE;
@@ -217,9 +218,12 @@ int main(int argc, char* args[]) {
       }
 
       /** NON-IMMEDIATE ACTIONS **/ {
-	for ( player_t* i=playerSckts; i<&playerSckts[maxPlayers]; i++ ) {
-	  // loop through number of commands in message
-	  
+	for ( player_t* i=playerSckts; i<=&playerSckts[maxPlayers]; i++ ) {
+	  if ( i==&playerSckts[maxPlayers] ) {
+	    // set i to point to server's local "player" with commands.
+	    // Some commands will work on a specific player, based on who sent them.
+	    // If from server, they will have to explicitly state the player
+	  }
 	  uint32_t numCmds = 0;
 	  if ( i->msgWalk!=NULL )
 	    numCmds=(uint32_t)*i->msgWalk;
@@ -229,12 +233,13 @@ int main(int argc, char* args[]) {
 	    // handle excess commands; save them for next tick or discard and warn player
 	  }
 	  i->msgWalk+=sizeof(uint32_t);
+	  // loop through number of commands in message
 	  for ( int32_t j=0; j<numCmds; j++ ) {
 	    int32_t cmd = (int32_t)*i->msgWalk;
 	    i->msgWalk+=sizeof(int32_t);
 	    int32_t *var = NULL;
 	    switch ( cmd ) {
-	    case CMD_SET:
+	      /*	    case CMD_SET:
 	      var = (int32_t*)i->msgWalk;
 	      i->msgWalk+=sizeof(int32_t);
 	      switch ( *var ) {
@@ -244,7 +249,7 @@ int main(int argc, char* args[]) {
 		makeLog(3,"player %u's name set to %s.\n",i->id,i->unique.playerName);
 		i->msgWalk+=PLAYER_NAME_SIZE;
 	      }
-	      break;
+	      break;*/
 	    default:
 	      // cmd not recognised.
 	      break;

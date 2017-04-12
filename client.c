@@ -19,9 +19,26 @@ int main() {
   /**GAME OPTIONS**/
   char playerName[32] = "clean";
   int actionGlfwKeyIndex[MAX_ACTIONS];
+  logVerbosity=3;
 
   FILE *consoleFd = startConsole("cl_config.txt","cl_console.txt");
-
+  cmdMsg_t test;
+  size_t read = 0;
+  char *cmd = (char*)malloc(256);
+  size_t cmdSz = 256;
+  while ( (read=getline(&cmd,&cmdSz,consoleFd))>=0 ) {
+    printf("read:%lu\n",read);
+    //    cmd[read-1]='\0';
+    // @note allow chat commands in config file, just as announcements at game startup?
+    if ( *cmd=='/' )
+      getValidCmd(cmd+1,&test,true,0);
+    else
+      printf("chat line: %s",cmd);
+  }
+  // @todo warn server variables in config file; no effect
+  free((void*)cmd);
+    return 0;
+  
   /** NETWORK SETUP **/
   unsigned int serverPort = 5666;
   char serverIp[] = "127.0.0.1";
@@ -43,9 +60,9 @@ int main() {
     uint32_t *numOfCmds = (query+1);
     *numOfCmds = 1;
     int32_t *cmd = (int32_t*)numOfCmds+1;
-    *cmd = CMD_SET;
+    //    *cmd = CMD_SET;
     int32_t *var = cmd+1;
-    *var = VAR_PLAYER_NAME;
+    //    *var = VAR_PLAYER_NAME;
     char *val1 = (char*)(var+1);
     strncpy(val1,playerName,32);
     
@@ -106,8 +123,6 @@ int main() {
   int width,height;
   timeval tickStart;
   uint32_t ticksPerSec=1;
-  char *cmd = (char*)malloc(256);
-  size_t cmdSz = 256;
   gettimeofday(&tickStart,NULL);
   while( !glfwWindowShouldClose(window) ) {
     /** WAIT LOOP **/
@@ -122,9 +137,6 @@ int main() {
 
       /** INTERPRET CONSOLE COMMANDS **/
       //getline()
-      int i;
-      if ( (i=getline(&cmd,&cmdSz,consoleFd))>=0 )
-	fwrite(cmd,i,1,stdout);
       
     } while (startTick(ticksPerSec,&tickStart));
 

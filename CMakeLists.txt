@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(cppgame)
 
 set(SHARED_SRC )
-set(CMAKE_C_FLAGS "-Wformat -m64")
+set(CMAKE_C_FLAGS "-Wformat -m64 -fsanitize=address")
 
 add_executable(sv_${PROJECT_NAME} ${SHARED_SRC} "server.c")
 add_executable(cl_${PROJECT_NAME} ${SHARED_SRC} "client.c")
